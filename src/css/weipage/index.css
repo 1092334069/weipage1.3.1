@@ -1,0 +1,152 @@
+body{
+	color:#333;
+}
+.menu-page{
+	width:100px;
+	text-align:center;
+}
+.menu-page .menu-title{
+	padding:40px 10px 10px;
+	font-size:16px;
+}
+.menu-page .tool-list{
+	padding:10px;
+}
+.menu-page .tool-list li{
+	margin:10px 0;
+	border-radius:8px;
+	padding:10px 0;
+	cursor:pointer;
+	background-color:#f2f2f2;
+}
+.menu-page .shortcut-list{
+	text-align:center;
+}
+.menu-page .shortcut-list li{
+	margin:10px;
+	cursor:pointer;
+}
+.menu-page .shortcut-list img{
+	width:32px;
+	height:32px;
+}
+.view-page{
+	position:absolute;
+	left:100px;
+	top:0;
+	width:375px;
+	border:1px solid #e5e5e5;
+}
+.view-page .view-page-head{
+	height:75px;
+	background-image:url('../../img/titlebar.png');
+	background-size:100% 100%;
+	cursor:pointer;
+}
+.view-page .view-page-content{
+	width:100%;
+	height:667px;
+	overflow-x:hidden;
+	overflow-y:auto;
+	position:relative;
+	background-color:#f2f2f2;
+	padding-right:2px;
+}
+.view-page .view-page-content .plugin{
+	cursor:pointer;
+}
+.view-page .view-page-content .plugin.current{
+	box-shadow:1px 1px 1px #138ed4;
+	z-index:2;
+}
+.plugin.clone{
+	position:fixed !important;
+	cursor:pointer;
+	z-index:100;
+}
+.plugin.drop{
+	opacity:0.5;
+}
+.edit-page{
+	position:absolute;
+	right:0;
+	top:0;
+	width:450px;
+	background-color:#f8f8f8;
+}
+.edit-page .tab-control{
+	background-color:#ddd;
+	display:flex;
+	justify-content:flex-start;
+	padding:10px 0 0 10px;
+}
+.edit-page .tab-control li{
+	padding:10px 20px;
+	font-size:18px;
+	border-radius:8px 8px 0 0;
+	cursor:pointer;
+}
+.edit-page .tab-control li.current{
+	background-color:#f8f8f8;
+}
+.edit-page .remove-plugin{
+	position:absolute;
+	right:12px;
+	top:12px;
+	width:24px;
+	height:24px;
+	background-image:url('../../img/icon-delete.png');
+	background-size:100% 100%;
+	cursor:pointer;
+}
+.image-model-list{
+	padding:20px 4px;
+	overflow:hidden;
+}
+.image-model-list .image-model-item{
+	width:80px;
+	height:80px;
+	margin:8px;
+	position:relative;
+	float:left;
+}
+.image-model-item img{
+	width:100%;
+	height:100%;
+	cursor:pointer;
+}
+.image-model-item .delete{
+	width:12px;
+	height:12px;
+	position:absolute;
+	right:0;
+	top:0;
+	background-image:url('../../img/icon-delete.png');
+	background-size:100% 100%;
+	cursor:pointer;
+}
+.foot-btn-list{
+	position:fixed;
+	left:50%;
+	bottom:50px;
+	transform:translate(-50%,0);
+	display:inline-flex;
+	justify-content:space-around;
+	z-index:100;
+}
+.foot-btn-list li{
+	padding:0 10px;
+}
+.plugin .drop-icon{
+	position:absolute;
+	top:0;
+	right:0;
+	cursor:move;
+}
+.plugin .resize-icon{
+	position:absolute;
+	bottom:0;
+	right:0;
+	transform:rotate(90deg);
+	cursor:se-resize;
+}

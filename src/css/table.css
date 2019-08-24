@@ -1,0 +1,19 @@
+.table-operate{
+	padding:20px 10px 10px 10px;
+}
+.table-list{
+	padding:10px;
+}
+.table-list .ivu-table-cell img{
+	width:120px;
+	max-height:80px;
+	margin:8px;
+}
+.table-page{
+	margin:auto;
+	padding:16px 0;
+	text-align:center;
+}
+.ivu-btn{
+	margin:0 5px;
+}
