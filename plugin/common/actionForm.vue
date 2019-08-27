@@ -10,24 +10,24 @@
 			<template v-for="(item,index) in formData.actionList" v-if="formData.selectIndex === index">
 				<div class="delete-module" @click="deleteAction"></div>
 				<div class="form">
-					<v-text lable="响应名" :value="item.name" name="name" @formChange="actionChange"></v-text>
+					<v-text lable="响应名" :formData="item" name="name"></v-text>
 				</div>
 				<div class="form">
-					<v-select lable="响应键" :options="actionKeyList" :value="item.key" name="key" @formChange="actionChange"></v-select>
+					<v-select lable="响应键" :options="actionKeyList" :formData="item" name="key"></v-select>
 				</div>
 				<div class="form">
-					<v-radio lable="响应条件" :options="actionConditionList" :value="item.condition" name="condition" @formChange="actionChange"></v-radio>
+					<v-radio lable="响应条件" :options="actionConditionList" :formData="item" name="condition"></v-radio>
 				</div>
 				<div class="form">
-					<v-radio lable="响应类型" :options="actionTypeList" :value="item.type" name="type" @formChange="actionTypeChange"></v-radio>
+					<v-radio lable="响应类型" :options="actionTypeList" :formData="item" name="type" @formChange="actionTypeChange"></v-radio>
 				</div>
 				<div class="form form-short" v-if="item.type === 'static'">
-					<v-number v-if="actionKeyType === 'number'" lable="响应值" :value="item.value" name="value" @formChange="actionChange"></v-number>
-					<v-color v-else-if="actionKeyType === 'color'" lable="响应值" :value="item.value" name="value" @formChange="actionChange"></v-color>
-					<v-image v-else-if="actionKeyType === 'image'" lable="响应值" :value="item.value" name="value" @formChange="actionChange" @selectImage="selectImage"></v-image>
-					<v-select v-else-if="actionKeyType === 'select'" lable="响应值" :options="actionValueOptions":value="item.value" name="value" @formChange="actionChange"></v-select>
-					<v-four-sides v-else-if="actionKeyType === 'fourSides'" lable="响应值" :value="item.value" name="value" @formChange="actionChange"></v-four-sides>
-					<v-text v-else lable="响应值" :value="item.value" name="value" @formChange="actionChange"></v-text>
+					<v-number v-if="actionKeyType === 'number'" lable="响应值" :formData="item" name="value"></v-number>
+					<v-color v-else-if="actionKeyType === 'color'" lable="响应值" :formData="item" name="value"></v-color>
+					<v-image v-else-if="actionKeyType === 'image'" lable="响应值" :formData="item" name="value" @selectImage="selectImage"></v-image>
+					<v-select v-else-if="actionKeyType === 'select'" lable="响应值" :options="actionValueOptions" :formData="item" name="value"></v-select>
+					<v-four-sides v-else-if="actionKeyType === 'fourSides'" lable="响应值" :formData="item" name="value"></v-four-sides>
+					<v-text v-else lable="响应值" :formData="item" name="value"></v-text>
 				</div>
 				<div class="form" v-else-if="item.type === 'interface'">
 					<div class="action-interface">
@@ -36,7 +36,7 @@
 					</div>
 				</div>
 				<div class="form" v-else>
-					<v-text lable="响应值" :value="item.value" size="l" name="value" @formChange="actionChange"></v-text>
+					<v-text lable="响应值" :formData="item" size="l" name="value"></v-text>
 				</div>
 			</template>
 			<hr/>
@@ -127,8 +127,8 @@
 					value: index
 				})
 			},
-			actionTypeChange: function(res) {
-				if (res.value === 'interface') {
+			actionTypeChange: function(val) {
+				if (val === 'interface') {
 					this.formData.actionList[this.formData.selectIndex]['value'] = {
 						name: '点击选择接口参数',
 						url: '',
@@ -137,15 +137,6 @@
 				} else {
 					this.formData.actionList[this.formData.selectIndex]['value'] = ''
 				}
-				this.actionChange(res)
-			},
-			actionChange: function(res) {
-				const actionList = this.formData.actionList
-				actionList[this.formData.selectIndex][res.name] = res.value
-				this.formChange({
-					name: 'actionList',
-					value: actionList
-				})
 			},
 			addAction: function() {
 				const actionList = this.formData.actionList

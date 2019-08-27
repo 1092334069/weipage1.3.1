@@ -6,28 +6,25 @@
 		</div>
 		<div v-if="formValid.shape">
 			<div class="form">
-				<v-number lable="宽度" :value="formData.width" name="width" @formChange="formChange"></v-number>
+				<v-number lable="宽度" :formData="formData" name="width"></v-number>
 			</div>
 			<div class="form">
-				<v-number lable="高度" :value="formData.height" name="height" @formChange="formChange"></v-number>
+				<v-number lable="高度" :formData="formData" name="height"></v-number>
 			</div>
 			<div class="form">
-				<v-four-sides lable="外边距" :value="formData.margin" name="margin" @formChange="formChange"></v-four-sides>
+				<v-four-sides lable="外边距" :formData="formData" name="margin"></v-four-sides>
 			</div>
 			<div class="form">
-				<v-four-sides lable="内边距" :value="formData.padding" name="padding" @formChange="formChange"></v-four-sides>
+				<v-four-sides lable="内边距" :formData="formData" name="padding"></v-four-sides>
 			</div>
 			<div class="form">
-				<v-four-sides lable="圆角" :value="formData.borderRadius" name="borderRadius" @formChange="formChange"></v-four-sides>
+				<v-four-sides lable="圆角" :formData="formData" name="borderRadius"></v-four-sides>
 			</div>
 			<div class="form">
-				<v-number lable="旋转" :value="formData.transformRotate" name="transformRotate" @formChange="formChange"></v-number>
+				<v-number lable="旋转" :formData="formData" name="transformRotate"></v-number>
 			</div>
 			<div class="form">
-				<v-radio lable="对齐" :options="textAlignOptions" :value="formData.textAlign" name="textAlign" @formChange="formChange"></v-radio>
-			</div>
-			<div class="form">
-				<v-radio lable="状态" :options="displayOptions" :value="formData.display" name="display" @formChange="formChange"></v-radio>
+				<v-radio lable="状态" :options="displayOptions" :formData="formData" name="display"></v-radio>
 			</div>
 		</div>
 		<div class="form-group" @click="triggerForm('border')">
@@ -36,17 +33,17 @@
 		</div>
 		<div v-if="formValid.border">
 			<div class="form">
-				<v-radio lable="边框状态" :options="borderDisplayOptions" :value="formData.border" name="border" @formChange="formChange"></v-radio>
+				<v-radio lable="边框状态" :options="borderDisplayOptions" :formData="formData" name="border"></v-radio>
 			</div>
 			<div v-if="formData.border==='block'">
 				<div class="form">
-					<v-radio lable="样式" :options="borderStyleOptions" :value="formData.borderStyle" name="borderStyle" @formChange="formChange"></v-radio>
+					<v-radio lable="边框风格" :options="borderStyleOptions" :formData="formData" name="borderStyle"></v-radio>
 				</div>
 				<div class="form">
-					<v-four-sides lable="尺寸" :value="formData.borderWidth" name="borderWidth" @formChange="formChange"></v-four-sides>
+					<v-four-sides lable="边框尺寸" :formData="formData" name="borderWidth"></v-four-sides>
 				</div>
 				<div class="form">
-					<v-color lable="颜色" :value="formData.borderColor" name="borderColor" @formChange="formChange"></v-color>
+					<v-color lable="边框颜色" :formData="formData" name="borderColor"></v-color>
 				</div>
 			</div>
 		</div>
@@ -56,13 +53,13 @@
 		</div>
 		<div v-if="formValid.location">
 			<div class="form">
-				<v-radio lable="是否定位" :options="locationPositionOptions" :value="formData.position" name="position" @formChange="formChange"></v-radio>
+				<v-radio lable="是否定位" :options="locationPositionOptions" :formData="formData" name="position"></v-radio>
 			</div>
 			<div class="form" v-if="formData.position==='absolute'">
-				<v-number lable="横向" :value="formData.left" name="left" @formChange="formChange"></v-number>
+				<v-number lable="横向" :formData="formData" name="left"></v-number>
 			</div>
 			<div class="form" v-if="formData.position==='absolute'">
-				<v-number lable="纵向" :value="formData.top" name="top" @formChange="formChange"></v-number>
+				<v-number lable="纵向" :formData="formData" name="top"></v-number>
 			</div>
 		</div>
 		<div class="form-group" @click="triggerForm('fill')">
@@ -71,10 +68,34 @@
 		</div>
 		<div v-if="formValid.fill">
 			<div class="form">
-				<v-color lable="颜色" :value="formData.backgroundColor" name="backgroundColor" @formChange="formChange"></v-color>
+				<v-color lable="颜色" :formData="formData" name="backgroundColor"></v-color>
 			</div>
 			<div class="form">
-				<v-image lable="图片" :value="formData.backgroundImage" name="backgroundImage" @selectImage="selectImage"></v-image>
+				<v-image lable="图片" :formData="formData" name="backgroundImage" @selectImage="selectImage"></v-image>
+			</div>
+		</div>
+		<div class="form-group" @click="triggerForm('text')">
+			<span>字体</span>
+			<span class="form-trigger" :class="{close:formValid.text}"></span>
+		</div>
+		<div v-if="formValid.text">
+			<div class="form">
+				<v-radio lable="对齐" :options="textAlignOptions" :formData="formData" name="textAlign"></v-radio>
+			</div>
+			<div class="form">
+				<v-number lable="字体大小" :formData="formData" name="fontSize"></v-number>
+			</div>
+			<div class="form">
+				<v-color lable="字体颜色" :formData="formData" name="color"></v-color>
+			</div>
+			<div class="form">
+				<v-number lable="字体行高" :formData="formData" name="lineHeight"></v-number>
+			</div>
+			<div class="form">
+				<v-radio lable="字体宽度" :options="fontWeightOptions" :formData="formData" name="fontWeight"></v-radio>
+			</div>
+			<div class="form">
+				<v-radio lable="字体风格" :options="fontStyleOptions" :formData="formData" name="fontStyle"></v-radio>
 			</div>
 		</div>
 	</div>
@@ -99,18 +120,9 @@
 					shape: true,
 					border: false,
 					location: false,
-					fill: false
+					fill: false,
+					text: false
 				},
-				textAlignOptions:[{
-					label: '左',
-					value: 'left'
-				},{
-					label: '右',
-					value: 'right'
-				},{
-					label: '中',
-					value: 'center'
-				}],
 				displayOptions: [{
 					label: '显示',
 					value: 'block'
@@ -141,6 +153,30 @@
 				},{
 					label: '是',
 					value: 'absolute'
+				}],
+				textAlignOptions:[{
+					label: '左',
+					value: 'left'
+				},{
+					label: '右',
+					value: 'right'
+				},{
+					label: '中',
+					value: 'center'
+				}],
+				fontWeightOptions: [{
+					label: '默认',
+					value: 'normal'
+				},{
+					label: '加粗',
+					value: 'bold'
+				}],
+				fontStyleOptions: [{
+					label: '默认',
+					value: 'normal'
+				},{
+					label: '斜体',
+					value: 'italic'
 				}]
 			}
 		},

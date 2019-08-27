@@ -1,9 +1,9 @@
 <template>
 	<div class="vSelect" :style="{paddingLeft:lableWidth}">
 		<span v-if="lable" class="lable" :style="{width:lableWidth}">{{lable}}：</span>
-		<select ref="form" @change="formChange">
+		<select ref="form" v-model="model" @change="formChange">
 			<option value="">请选择</option>
-			<option v-for="item in options" :value="item.value" :selected="checkTheSame(item.value, value)">{{item.label}}</option>
+			<option v-for="item in options" :value="item.value" :selected="checkTheSame(item.value, model)">{{item.label}}</option>
 		</select>
 	</div>
 </template>
@@ -12,6 +12,16 @@
 	export default {
 		name: "vSelect",
 		props: {
+			formData: {
+				type: Object,
+				default: function() {
+					return {}
+				}
+			},
+			name: {
+				type: String,
+				default: ''
+			},
 			lable: {
 				type: String,
 				default: ''
@@ -25,13 +35,6 @@
 				default: function() {
 					return []
 				}
-			},
-			name: {
-				type: String,
-				default: ''
-			},
-			value: {
-				type: [String, Number]
 			}
 		},
 		data () {
@@ -46,11 +49,21 @@
 				}
 			},
 			formChange: function() {
-				var res = {
-					name: this.name,
-					value: this.$refs.form.value
+				this.$emit('formChange', this.$refs.form.value)
+			}
+		},
+		computed: {
+			model: {
+				get() {
+					return this.formData[this.name]
+				},
+				set(val) {
+					this.formData[this.name] = val
+					this.$emit('formChange', {
+						name: this.name,
+						value: val
+					})
 				}
-				this.$emit('formChange', res)
 			}
 		}		
 	}

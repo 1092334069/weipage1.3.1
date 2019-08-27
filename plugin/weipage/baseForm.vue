@@ -1,19 +1,19 @@
 <template>
 	<div class="plugin-form">
 		<div class="form">
-			<v-text lable="名称" :value="formData.name" size="l" name="name" @formChange="weipageChange"></v-text>
+			<v-text lable="名称" :formData="formData" name="name" size="l"></v-text>
 		</div>
 		<div class="form">
-			<v-text lable="描述" :value="formData.describes" size="l" name="describes" @formChange="weipageChange"></v-text>
+			<v-text lable="描述" :formData="formData" name="describes" size="l"></v-text>
 		</div>
 		<div class="form">
-			<v-image lable="图片" :value="formData.cover" name="cover" @selectImage="selectImage"></v-image>
+			<v-image lable="图片" :formData="formData" name="cover" @selectImage="selectImage"></v-image>
 		</div>
 		<div class="form">
-			<v-text lable="文件名" :value="formData.pageName" size="l" name="pageName" placeholder="请输入字母" @formChange="weipageChange"></v-text>
+			<v-text lable="文件名" :formData="formData" name="pageName" size="l" placeholder="请输入字母"></v-text>
 		</div>
 		<div class="form">
-			<v-color lable="背景色" :value="formData.backgroundColor" name="backgroundColor" @formChange="weipageChange"></v-color>
+			<v-color lable="背景色" :formData="formData" name="backgroundColor"></v-color>
 		</div>
 		<div class="form-list">
 			<div class="form-lable">接口：</div>

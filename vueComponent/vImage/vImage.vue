@@ -1,8 +1,8 @@
 <template>
 	<div class="vImage" :style="{paddingLeft:lableWidth}">
 		<span v-if="lable" class="lable" :style="{width:lableWidth}">{{lable}}：</span>
-		<div v-if="value!==''" class="upload-btn" @click="selectImage">
-			<img :src="value" />
+		<div v-if="model!==''" class="upload-btn" @click="selectImage">
+			<img :src="model" />
 		</div>
 		<div v-else class="upload-btn default" @click="selectImage"></div>
 	</div>
@@ -12,9 +12,11 @@
 	export default {
 		name: "vImage",
 		props: {
-			value: {
-				type: String,
-				default: ''
+			formData: {
+				type: Object,
+				default: function() {
+					return {}
+				}
 			},
 			name: {
 				type: String,
@@ -37,6 +39,20 @@
 				this.$emit('selectImage', {
 					name: this.name
 				})
+			}
+		},
+		computed: {
+			model: {
+				get() {
+					return this.formData[this.name]
+				},
+				set(val) {
+					this.formData[this.name] = val
+					this.$emit('formChange', {
+						name: this.name,
+						value: val
+					})
+				}
 			}
 		}		
 	}

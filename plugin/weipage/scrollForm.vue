@@ -10,10 +10,10 @@
 			<template v-for="(item,index) in formData.scrollEvent.eventList" v-if="formData.scrollEvent.selectIndex === index">
 				<div class="delete-module" @click="deleteEvent"></div>
 				<div class="form">
-					<v-radio lable="方向" :options="directionOptions" :value="item.direction" name="direction" @formChange="eventChange"></v-radio>
+					<v-radio lable="方向" :options="directionOptions" :formData="item" name="direction"></v-radio>
 				</div>
 				<div class="form">
-					<v-radio lable="类型" :options="eventTypeOptions" :value="item.type" name="type" @formChange="eventTypeChange"></v-radio>
+					<v-radio lable="类型" :options="eventTypeOptions" :formData="item" name="type"></v-radio>
 				</div>
 				<template v-if="item.type === 'normal'">
 					<div class="form-list">
@@ -22,7 +22,7 @@
 					</div>
 					<template v-if="item.value.options && item.value.options.length">
 						<div class="form">
-							<v-select lable="响应" :options="item.value.options" :value="item.value.actionIndex" @formChange="normalEventChange"></v-select>
+							<v-select lable="响应" :options="item.value.options" :formData="item.value" name="actionIndex" @formChange="normalEventChange"></v-select>
 						</div>
 					</template>
 				</template>
@@ -176,7 +176,7 @@
 				}
 				this.eventChange(res)
 			},
-			normalEventChange: function(res) {
+			normalEventChange: function(val) {
 				const v = this.formData.scrollEvent.eventList[this.formData.scrollEvent.selectIndex]['value']
 				let actionName = ''
 				for (var i = 0; i < v.options.length; i++) {
@@ -184,7 +184,7 @@
 						actionName = v.options.label
 					}
 				}
-				v['actionIndex'] = res.value
+				v['actionIndex'] = val
 				v['actionName'] = actionName
 				const r = {
 					name: 'value',
@@ -192,7 +192,7 @@
 				}
 				this.eventChange(r)
 			},
-			interfaceChange: function(res) {
+			interfaceChange: function(val) {
 				const interfaceInfo = this.formData.scrollEvent.eventList[this.formData.scrollEvent.selectIndex]['value']
 				for (let i = 0; i < interfaceInfo.param.length; i++) {
 					if (interfaceInfo.param[i].key === res.name) {

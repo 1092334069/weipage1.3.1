@@ -1,13 +1,13 @@
 <template>
 	<div class="plugin-form">
 		<div class="form">
-			<v-text lable="名称" :value="formData.name" size="l" name="name" @formChange="formChange"></v-text>
+			<v-text lable="名称" :formData="formData" name="name" size="l"></v-text>
 		</div>
 		<div class="form">
-			<v-radio lable="类型" :options="typeList" :value="formData.type" name="type" @formChange="formChange"></v-radio>
+			<v-radio lable="类型" :options="typeList" :formData="formData" name="type"></v-radio>
 		</div>
 		<action-form :form-data="formData" :action-key-list="actionKeyList" @form-change="formChange" @select-action-value="selectActionValue" @select-image="actionSelectImage"></action-form>
-		<form>
+		<form ref="actionForm">
 			<div class="form-list">
 				<div class="form-lable">属性：</div>
 				<div class="form-item" :class="parseClass(index)" v-for="(item,index) in formData.attrList" @click="selectAttr(index)">{{item.name}}</div>
@@ -112,13 +112,43 @@
 					value: 'style.position',
 					type: 'text'
 				},{
-					label: '样式 颜色',
+					label: '样式 背景颜色',
 					value: 'style.backgroundColor',
 					type: 'color'
 				},{
 					label: '样式 图片',
 					value: 'style.backgroundImage',
 					type: 'image'
+				},{
+					label: '样式 字体对齐',
+					value: 'style.textAlign',
+					type: 'select',
+					options: [{
+						label: '左',
+						value: 'left'
+					},{
+						label: '右',
+						value: 'right'
+					},{
+						label: '中',
+						value: 'center'
+					}]
+				},{
+					label: '样式 字体大小',
+					value: 'style.fontSize',
+					type: 'number'
+				},{
+					label: '样式 字体颜色',
+					value: 'style.color',
+					type: 'color'
+				},{
+					label: '样式 字体行高',
+					value: 'style.lineHeight',
+					type: 'number'
+				},{
+					label: '样式 字体宽度',
+					value: 'style.fontWeight',
+					type: 'number'
 				}]
 			}
 		},

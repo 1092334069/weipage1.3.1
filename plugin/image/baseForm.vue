@@ -6,6 +6,9 @@
 		<div class="form">
 			<v-image lable="图片" :value="formData.data" name="data" @selectImage="selectImage"></v-image>
 		</div>
+		<div class="form">
+			<v-number lable="宽度" :value="formData.width" name="width" @formChange="formChange"></v-number>
+		</div>
 		<action-form :form-data="formData" :action-key-list="actionKeyList" @form-change="formChange" @select-action-value="selectActionValue" @select-image="actionSelectImage"></action-form>
 	</div>
 </template>
@@ -28,8 +31,8 @@
 					value: 'base.data',
 					type: 'image'
 		    	},{
-		    		label: '样式 宽度',
-		    		value: 'style.width',
+		    		label: '宽度',
+		    		value: 'base.width',
 		    		type: 'number'
 		    	}]
 		    }

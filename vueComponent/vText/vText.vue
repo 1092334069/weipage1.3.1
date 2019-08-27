@@ -1,7 +1,7 @@
 <template>
 	<div class="vInput" :style="{paddingLeft:lableWidth}">
 		<span v-if="lable" class="lable" :style="{width:lableWidth}">{{lable}}：</span>
-		<input type="text" ref="form" :class="size" :value="value" :readonly="isReadOnly" :placeholder="placeholder" @input="formChange" />
+		<input type="text" :class="size" v-model="model" :readonly="isReadOnly" :placeholder="placeholder" />
 	</div>
 </template>
 
@@ -9,8 +9,11 @@
 	export default {
 		name: "vText",
 		props: {
-			value: {
-				type: [String, Number]
+			formData: {
+				type: Object,
+				default: function() {
+					return {}
+				}
 			},
 			name: {
 				type: String,
@@ -40,13 +43,18 @@
 		data () {
 		    return {}
 		},
-		methods: {
-			formChange: function() {
-				var res = {
-					name: this.name,
-					value: this.$refs.form.value
+		computed: {
+			model: {
+				get() {
+					return this.formData[this.name]
+				},
+				set(val) {
+					this.formData[this.name] = val
+					this.$emit('formChange', {
+						name: this.name,
+						value: val
+					})
 				}
-				this.$emit('formChange', res)
 			}
 		}
 	}

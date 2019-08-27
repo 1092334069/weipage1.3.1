@@ -2,8 +2,8 @@
 	<div class="vRadio" :style="{paddingLeft:lableWidth}">
 		<span v-if="lable" class="lable" :style="{width:lableWidth}">{{lable}}：</span>
 		<div v-for="item in options" class="radio-item">
-			<input type="radio" v-if="item.value == value" :value="item.value" :name="name" checked="checked" @input="formChange" />
-			<input type="radio" v-else :value="item.value" :name="name" @input="formChange" />
+			<input type="radio" v-if="item.value == model" v-model="model" :value="item.value" checked="checked" @input="formChange" />
+			<input type="radio" v-else v-model="model" :value="item.value" @input="formChange" />
 			<span>{{item.label}}</span>
 		</div>
 	</div>
@@ -13,6 +13,16 @@
 	export default {
 		name: "vRadio",
 		props: {
+			formData: {
+				type: Object,
+				default: function() {
+					return {}
+				}
+			},
+			name: {
+				type: String,
+				default: ''
+			},
 			lable: {
 				type: String,
 				default: ''
@@ -26,14 +36,6 @@
 				default: function() {
 					return []
 				}
-			},
-			name: {
-				type: String,
-				default: ''
-			},
-			value: {
-				type: String,
-				default: ''
 			}
 		},
 		data () {
@@ -41,11 +43,21 @@
 		},
 		methods: {
 			formChange: function(e) {
-				var res = {
-					name: this.name,
-					value: e.path[0].defaultValue
+				this.$emit('formChange', e.path[0].defaultValue)
+			}
+		},
+		computed: {
+			model: {
+				get() {
+					return this.formData[this.name]
+				},
+				set(val) {
+					this.formData[this.name] = val
+					this.$emit('formChange', {
+						name: this.name,
+						value: val
+					})
 				}
-				this.$emit('formChange', res)
 			}
 		}		
 	}

@@ -27,7 +27,12 @@ var pluginConfig = {
 			top: 0,
 			left: 0,
 			display: 'block',
-			textAlign: 'left'
+			textAlign: 'left',
+			fontSize: 12,
+			color: '#333333',
+			lineHeight: 18,
+			fontWeight: 'normal',
+			fontStyle: 'normal'
 		},
 		event: {
 			eventList: [],
@@ -42,13 +47,6 @@ var pluginConfig = {
 			data: '',
 			actionList: [],
 			selectIndex: 0
-		},
-		style: {
-			fontSize: 12,
-			color: '#333333',
-			lineHeight: 18,
-			fontWeight: 'normal',
-			fontStyle: 'normal'
 		}
 	},
 	image: {
@@ -56,11 +54,9 @@ var pluginConfig = {
 		base: {
 			name: '图片',
 			data: '',
+			width: 100,
 			actionList: [],
 			selectIndex: 0
-		},
-		style: {
-			width: 375
 		}
 	},
 	form: {

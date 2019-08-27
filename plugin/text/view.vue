@@ -1,5 +1,5 @@
 <template>
-	<div class="text plugin" :class="{current: selectPluginId === viewData.pluginId}" :data-id="viewData.pluginId" :style="parseTextStyle()">
+	<div class="text plugin" :class="{current: selectPluginId === viewData.pluginId}" :data-id="viewData.pluginId">
 		<span v-if="viewData.base.data">{{viewData.base.data}}</span>
 		<span v-else>{{viewData.base.name}}</span>
 		<Icon size="12" class="drop-icon" v-if="selectPluginId === viewData.pluginId" type="md-move" />

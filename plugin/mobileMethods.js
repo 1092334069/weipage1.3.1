@@ -19,16 +19,16 @@ const styleView = {
 	},
 	parseImageStyle: function() {
 		let width
-		const viewStyle = this.getViewStyleData()
-		if (viewStyle) {
-			width = 'width:' + this.getViewStyleData('width')
+		const baseData = this.parseBaseData()
+		if (baseData) {
+			width = 'width:' + baseData.width
 			return width
 		} else {
 			return ''
 		}
 	},
 	parsePanelStyle: function() {
-		let width,height,margin,padding,borderRadius,transformRotate,textAlign,border,position,backgroundColor,backgroundImage
+		let width,height,margin,padding,borderRadius,transformRotate,border,position,backgroundColor,backgroundImage,textAlign,fontSize,color,lineHeight,fontWeight,fontStyle
 		const viewStyle = this.getViewStyleData()
 		if (viewStyle) {
 			if (this.getViewStyleData('display') === 'none') {
@@ -47,27 +47,18 @@ const styleView = {
 			margin = 'margin:' + this.parseFourSides(this.getViewStyleData('margin')) + ';'
 			padding = 'padding:' + this.parseFourSides(this.getViewStyleData('padding')) + ';'
 			borderRadius = 'borderRadius:' + this.parseFourSides(this.getViewStyleData('borderRadius')) + ';'
-			textAlign = 'textAlign:' + this.viewData.style.textAlign + ';'
 			transformRotate = 'transform:rotate(' + this.getViewStyleData('transformRotate') + 'deg);'
 			border = this.parseBorder()  + ';'
 			position = this.parsePosition() + ';'
 			backgroundColor = 'backgroundColor:' + this.getViewStyleData('backgroundColor') + ';'
-			backgroundImage = 'backgroundImage:url(' + this.getViewStyleData('backgroundImage') + ')'
-			return width + height + margin + padding + borderRadius + transformRotate + textAlign + border + position + backgroundColor + backgroundImage
-		} else {
-			return ''
-		}
-	},
-	parseTextStyle: function() {
-		let fontSize,color,lineHeight,fontWeight,fontStyle
-		const viewStyle = this.getViewStyleData()
-		if (viewStyle) {
+			backgroundImage = 'backgroundImage:url(' + this.getViewStyleData('backgroundImage') + ');'
+			textAlign = 'textAlign:' + this.getViewStyleData('textAlign') + ';'
 			fontSize = 'fontSize:' + this.getViewStyleData('fontSize') + ';'
 			color = 'color:' + this.getViewStyleData('color') + ';'
 			lineHeight = 'lineHeight:' + this.getViewStyleData('lineHeight') + 'px;'
 			fontWeight = 'fontWeight:' + this.getViewStyleData('fontWeight') + ';'
 			fontStyle = 'fontStyle:' + this.getViewStyleData('fontStyle')
-			return fontSize + color + lineHeight + fontWeight + fontStyle
+			return width + height + margin + padding + borderRadius + transformRotate + border + position + backgroundColor + backgroundImage + textAlign  + fontSize + color + lineHeight + fontWeight + fontStyle
 		} else {
 			return ''
 		}

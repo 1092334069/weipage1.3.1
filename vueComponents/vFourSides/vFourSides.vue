@@ -1,13 +1,13 @@
 <template>
 	<div>
-		<v-number v-if="isValueNumber" :lable="lable" :value="value" :name="name" @formChange="formChange"></v-number>
-		<v-text v-else :lable="lable" :value="valueStr" :isReadOnly="isReadOnly" :name="name" @formChange="formChange"></v-text>
-		<div class="more-input" :class="{close:subFormValid}" @click="triggerSubForm"></div>
+		<v-number v-if="!isValueObject" :lable="lable" :formData="formData" :name="name"></v-number>
+		<v-text v-else :lable="lable" :formData="valueObject" name="value" :isReadOnly="isReadOnly"></v-text>
+		<div class="more-input" :class="{ close: subFormValid }" @click="triggerSubForm"></div>
 		<div class="sub-form" v-if="subFormValid">
-			<v-number lable="上" size="ss" :lableWidth="lableWidth" :value="formTop" :pname="name" name="top" @formChange="formChange"></v-number>
-			<v-number lable="右" size="ss" :lableWidth="lableWidth" :value="formRight" :pname="name" name="right" @formChange="formChange"></v-number>
-			<v-number lable="下" size="ss" :lableWidth="lableWidth" :value="formBottom" :pname="name" name="bottom" @formChange="formChange"></v-number>
-			<v-number lable="左" size="ss" :lableWidth="lableWidth" :value="formLeft" :pname="name" name="left" @formChange="formChange"></v-number>
+			<v-number lable="上" size="ss" :formData="modelForm" name="top" :lableWidth="lableWidth" @formChange="formChange"></v-number>
+			<v-number lable="右" size="ss" :formData="modelForm" name="right" :lableWidth="lableWidth" @formChange="formChange"></v-number>
+			<v-number lable="下" size="ss" :formData="modelForm" name="bottom" :lableWidth="lableWidth" @formChange="formChange"></v-number>
+			<v-number lable="左" size="ss" :formData="modelForm" name="left" :lableWidth="lableWidth" @formChange="formChange"></v-number>
 		</div>
 	</div>
 </template>
@@ -16,7 +16,12 @@
 	export default {
 		name: "vFourSides",
 		props: {
-			value: [Number, Array, String],
+			formData: {
+				type: Object,
+				default: function() {
+					return {}
+				}
+			},
 			name: {
 				type: String,
 				default: ''
@@ -34,23 +39,6 @@
 		    }
 		},
 		methods: {
-			formChange: function(res) {
-				var result
-				if (res.pname) {
-					var sList = [this.formTop, this.formRight, this.formBottom, this.formLeft]
-					result = this.mergeSubForm(sList, res.pname, res.name, res.value)
-				} else{
-					result = res
-				}
-				this.$emit('formChange', result)
-			},
-			triggerForm: function(key) {
-				if (this.formValid[key]) {
-					this.formValid[key] = false
-				} else {
-					this.formValid[key] = true
-				}
-			},
 			triggerSubForm: function() {
 				if (this.subFormValid) {
 					this.subFormValid = false
@@ -59,69 +47,73 @@
 				}
 			},
 			computedSubForm: function(data, index) {
-				if (typeof data === 'number') {
+				if (typeof data === 'number' || typeof data === 'string') {
 					return data
-				} else if (typeof this.value === 'object' && this.value instanceof Array && this.value[index]) {
-					return this.value[index]
+				} else if (typeof data === 'object' && data instanceof Array && data[index]) {
+					return data[index]
 				} else {
 					return 0
 				}
 			},
-			mergeSubForm: function(list, pname, name, value) {
-				switch(name) {
-					case 'top': list[0] = value; break;
-					case 'right': list[1] = value; break;
-					case 'bottom': list[2] = value; break;
-					case 'left': list[3] = value; break;
+			formChange: function(r) {
+				const val = this.formData[this.name]
+				let data = [0, 0, 0, 0]
+				if (typeof val === 'number' || typeof val === 'string') {
+					data = [val, val, val, val]
+				} else if (typeof val === 'object' && val instanceof Array) {
+					data = val
 				}
-				var resVal
-				var theSame = true
-				for (var i = 1; i < list.length; i++) {
-					if (list[i] != list[i-1]) {
-						theSame = false
+				switch(r.name) {
+					case 'top': data[0] = r.value; break;
+					case 'right': data[1] = r.value; break;
+					case 'bottom': data[2] = r.value; break;
+					default: data[3] = r.value
+				}
+				let isTheSame = true
+				for (let i = 1; i < data.length; i++) {
+					if (parseFloat(data[i]) !== parseFloat(data[i-1])) {
+						isTheSame = false
 					}
 				}
-				if (theSame) {
-					resVal = list[0]
-				} else {
-					resVal = list
-				}
-				return {
-					name: pname,
-					value: resVal
+				this.modelValue = r.value
+				if (!isTheSame) {
+					this.modelValue = data
 				}
 			}
 		},
 		computed: {
-			isValueNumber() {
-				if (typeof this.value === 'number') {
+			modelForm() {
+				return {
+					top: this.computedSubForm(this.formData[this.name], 0),
+					right: this.computedSubForm(this.formData[this.name], 1),
+					bottom: this.computedSubForm(this.formData[this.name], 2),
+					left: this.computedSubForm(this.formData[this.name], 3)
+				}
+			},
+			modelValue: {
+				get() {
+					return this.formData[this.name]
+				},
+				set(val) {
+					this.formData[this.name] = val
+				}
+			},
+			isValueObject() {
+				if (typeof this.formData[this.name] === 'object') {
 					return true
 				} else {
 					return false
 				}
 			},
-			valueStr() {
-				if (typeof this.value === 'object' && this.value instanceof Array && this.value.length) {
-					return this.value.join(' ')
+			valueObject() {
+				if (typeof this.modelValue === 'object' && this.modelValue instanceof Array) {
+					return {
+						value: this.modelValue.join(' ')
+					}
 				} else {
-					return ''
+					return {}
 				}
-			},
-			formTop() {
-				return this.computedSubForm(this.value, 0)
-			},
-			formRight() {
-				return this.computedSubForm(this.value, 1)
-			},
-			formBottom() {
-				return this.computedSubForm(this.value, 2)
-			},
-			formLeft() {
-				return this.computedSubForm(this.value, 3)
 			}
-		},
-		watch: {
-
 		}
 	}
 </script>

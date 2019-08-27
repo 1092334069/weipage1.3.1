@@ -1,7 +1,7 @@
 <template>
 	<div class="vInput" :style="{paddingLeft:lableWidth}">
 		<span v-if="lable" class="lable" :style="{width:lableWidth}">{{lable}}：</span>
-		<input type="number" ref="form" :class="size" :value="value" :placeholder="placeholder" @input="formChange" />
+		<input type="number" :class="size" v-model="model" :placeholder="placeholder" />
 	</div>
 </template>
 
@@ -9,13 +9,11 @@
 	export default {
 		name: "vNumber",
 		props: {
-			value: {
-				type: [Number,String],
-				default: 0
-			},
-			pname: {
-				type: String,
-				default: ''
+			formData: {
+				type: Object,
+				default: function() {
+					return {}
+				}
 			},
 			name: {
 				type: String,
@@ -41,14 +39,18 @@
 		data () {
 		    return {}
 		},
-		methods: {
-			formChange: function() {
-				var res = {
-					pname: this.pname,
-					name: this.name,
-					value: parseFloat(this.$refs.form.value)
+		computed: {
+			model: {
+				get() {
+					return parseFloat(this.formData[this.name])
+				},
+				set(val) {
+					this.formData[this.name] = val
+					this.$emit('formChange', {
+						name: this.name,
+						value: val
+					})
 				}
-				this.$emit('formChange', res)
 			}
 		}		
 	}

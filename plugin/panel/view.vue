@@ -68,7 +68,6 @@
 		display:inline-block;
 	}
 	.panel .panel-item{
-		width:100%;
 		position:relative;
 		background-size:100% auto;
 		background-repeat:no-repeat;

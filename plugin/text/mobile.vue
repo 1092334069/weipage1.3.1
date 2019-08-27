@@ -1,5 +1,5 @@
 <template>
-	<div class="text plugin" :data-id="viewData.pluginId" :style="parseTextStyle()">
+	<div class="text plugin" :data-id="viewData.pluginId">
 		<span v-if="parseBaseData()">{{parseBaseData()}}</span>
 	</div>
 </template>

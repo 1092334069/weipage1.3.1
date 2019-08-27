@@ -9,16 +9,16 @@
 			<hr/>
 			<template v-for="(item,index) in formData.countEvent.eventList" v-if="formData.countEvent.selectIndex === index">
 				<div class="form">
-					<v-text lable="名称" :value="item.name" name="name" @formChange="eventChange"></v-text>
+					<v-text lable="名称" :formData="item" name="name"></v-text>
 				</div>
 				<div class="form">
-					<v-radio lable="规则" :options="ruleOptions" :value="item.rule" name="rule" @formChange="eventChange"></v-radio>
+					<v-radio lable="规则" :options="ruleOptions" :formData="item" name="rule"></v-radio>
 				</div>
 				<div class="form">
-					<v-number lable="初始值" :value="item.initial" name="initial" @formChange="eventChange"></v-number>
+					<v-number lable="初始值" :formData="item" name="initial"></v-number>
 				</div>
 				<div class="form">
-					<v-number lable="变化基数" :value="item.cardinal" name="cardinal" @formChange="eventChange"></v-number>
+					<v-number lable="变化基数" :formData="item" name="cardinal"></v-number>
 				</div>
 			</template>
 			<hr/>
@@ -97,14 +97,6 @@
 					name: 'selectIndex',
 					value: 0
 				})
-				this.weipageChange({
-					name: 'eventList',
-					value: eventList
-				})
-			},
-			eventChange: function(res) {
-				const eventList = this.formData.countEvent.eventList
-				eventList[this.formData.countEvent.selectIndex][res.name] = res.value
 				this.weipageChange({
 					name: 'eventList',
 					value: eventList

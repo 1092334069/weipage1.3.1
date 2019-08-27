@@ -44,12 +44,15 @@
 					<li :class="{current: selectForm == 'base'}" @click="changeFormTab('base')">基础</li>
 					<li :class="{current: selectForm == 'style'}" @click="changeFormTab('style')">样式</li>
 					<li :class="{current: selectForm == 'event'}" @click="changeFormTab('event')">事件</li>
-					<li :class="{current: selectForm == 'animation'}" @click="changeFormTab('animation')">动画</li>
-					<li :class="{current: selectForm == 'statistics'}" @click="changeFormTab('statistics')">统计</li>
+					<!-- <li :class="{current: selectForm == 'animation'}" @click="changeFormTab('animation')">动画</li>
+					<li :class="{current: selectForm == 'statistics'}" @click="changeFormTab('statistics')">统计</li> -->
+				</ul>
+				<ul class="tab-control" v-else-if="editForm.pluginType == 'form'">
+					<li :class="{current: selectForm == 'base'}" @click="changeFormTab('base')">基础</li>
+					<li :class="{current: selectForm == 'style'}" @click="changeFormTab('style')">样式</li>
 				</ul>
 				<ul class="tab-control" v-else>
 					<li :class="{current: selectForm == 'base'}" @click="changeFormTab('base')">基础</li>
-					<li :class="{current: selectForm == 'style'}" @click="changeFormTab('style')">样式</li>
 				</ul>
 				<div class="remove-plugin" @click="removePlugin(editForm.pluginId)"></div>
 				<template v-if="selectForm == 'base'">
@@ -60,8 +63,6 @@
 				</template>
 				<template v-if="selectForm == 'style'">
 					<panel-style-form v-if="editForm.pluginType == 'panel'" :form-data="editForm.style" @form-change="formChange" @select-image="pluginImageUpload"></panel-style-form>
-					<text-style-form v-else-if="editForm.pluginType == 'text'" :form-data="editForm.style" @form-change="formChange"></text-style-form>
-					<image-style-form v-else-if="editForm.pluginType == 'image'" :form-data="editForm.style" @form-change="formChange"></image-style-form>
 					<form-style-form v-else-if="editForm.pluginType == 'form'" :form-data="editForm.style" @form-change="formChange"></form-style-form>
 				</template>
 				<template v-if="selectForm == 'event'">
