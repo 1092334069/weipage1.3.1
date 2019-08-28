@@ -2,7 +2,8 @@
 	<div>
 		<v-number v-if="!isValueObject" :lable="lable" :formData="formData" :name="name"></v-number>
 		<v-text v-else :lable="lable" :formData="valueObject" name="value" :isReadOnly="isReadOnly"></v-text>
-		<div class="more-input" :class="{ close: subFormValid }" @click="triggerSubForm"></div>
+		<Icon v-if="subFormValid" size="20" type="ios-arrow-back" class="icon-more" @click="triggerSubForm" />
+		<Icon v-else type="ios-arrow-forward" size="20" class="icon-more" @click="triggerSubForm" />
 		<div class="sub-form" v-if="subFormValid">
 			<v-number lable="上" size="ss" :formData="modelForm" name="top" :lableWidth="lableWidth" @formChange="formChange"></v-number>
 			<v-number lable="右" size="ss" :formData="modelForm" name="right" :lableWidth="lableWidth" @formChange="formChange"></v-number>
@@ -119,24 +120,11 @@
 </script>
 
 <style scoped>
-	.more-input{
-		width:20px;
-		height:20px;
-		background-image:url('../../src/img/icon-more.png');
-		background-size:100% 100%;
-		position:absolute;
-		right:55px;
-		top:10px;
-		cursor:pointer;
-	}
-	.more-input.close{
-		transform:rotate(180deg);
-	}
 	.sub-form{
 		position:absolute;
 		padding:10px;
 		top:0;
-		right:-85px;
+		right:-90px;
 		width:130px;
 		background-color:#f0f0f0;
 		border-radius:5px;
@@ -150,10 +138,10 @@
 		border-bottom:10px solid transparent;
 		border-right:20px solid #f0f0f0;
 		position:absolute;
-		top:10px;
-		left:-20px;
+		top:12px;
+		left:-16px;
 	}
-	.sub-form.hidden{
-		display:none;
+	.icon-more{
+		cursor:pointer;
 	}
 </style>

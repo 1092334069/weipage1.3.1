@@ -7,14 +7,14 @@
 		</div>
 		<div class="sub-form-list" v-if="formData.eventList && formData.eventList.length">
 			<hr/>
-			<template v-for="(item,index) in formData.eventList" v-if="formData.selectIndex === index">
+			<template v-for="(item,index) in formData.eventList" v-if="selectIndex === index">
 				<div class="delete-module" @click="deleteEvent"></div>
 				<div class="form">
-					<v-radio lable="类型" :options="eventTypeOptions" :value="item.type" name="type" @formChange="eventTypeChange"></v-radio>
+					<v-radio lable="类型" :options="eventTypeOptions" :formData="item" name="type" @formChange="eventTypeChange"></v-radio>
 				</div>
 				<template v-if="item.type === 'link'">
 					<div class="form">
-						<v-text lable="链接地址" :value="item.value" size="l" name="value" @formChange="eventChange"></v-text>
+						<v-text lable="链接地址" :formData="item" name="value" size="l"></v-text>
 					</div>
 				</template>
 				<template v-if="item.type === 'normal'">
@@ -24,7 +24,7 @@
 					</div>
 					<template v-if="item.value.options && item.value.options.length">
 						<div class="form">
-							<v-select lable="响应" :options="item.value.options" :value="item.value.actionIndex" @formChange="normalEventChange"></v-select>
+							<v-select lable="响应" :options="item.value.options" :formData="item.value" name="actionIndex" @formChange="normalEventChange"></v-select>
 						</div>
 					</template>
 				</template>
@@ -43,11 +43,11 @@
 				</template>
 				<form v-else>
 					<div class="form">
-						<v-radio lable="触发状态" :options="statusAttrOptions" :value="item.status.attr" name="attr" @formChange="statusChange"></v-radio>
+						<v-radio lable="触发状态" :options="statusAttrOptions" :formData="item.status" name="attr"></v-radio>
 					</div>
 					<template v-if="item.status.attr === 'condition'">
 						<div class="form">
-							<v-radio lable="触发类型" :options="statusTypeOptions" :value="item.status.type" name="type" @formChange="statusTypeChange"></v-radio>
+							<v-radio lable="触发类型" :options="statusTypeOptions" :formData="item.status" name="type" @formChange="statusTypeChange"></v-radio>
 						</div>
 						<div class="form" v-if="item.status.type === 'interface'">
 							<div class="form-perch">
@@ -56,10 +56,10 @@
 							</div>
 						</div>
 						<div class="form" v-else>
-							<v-text lable="触发键" :value="item.status.key" name="key" @formChange="statusChange"></v-text>
+							<v-text lable="触发键" :formData="item.status" name="key"></v-text>
 						</div>
 						<div class="form">
-							<v-text lable="触发值" :value="item.status.value" name="value" @formChange="statusChange"></v-text>
+							<v-text lable="触发值" :formData="item.status" name="value"></v-text>
 						</div>
 					</template>
 				</form>
@@ -94,6 +94,7 @@
 		},
 		data () {
 			return {
+				selectIndex: 0,
 				eventTypeOptions: [{
 					label: '接口事件',
 					value: 'interface'
@@ -148,7 +149,7 @@
 				this.$emit('form-change', res)
 			},
 			parseClass: function(index) {
-				if (index === this.formData.selectIndex) {
+				if (index === this.selectIndex) {
 					return 'current'
 				} else {
 					return ''
@@ -161,10 +162,7 @@
 				this.$emit('open-plugin-tree-model', 'event')
 			},
 			selectEvent: function(index) {
-				this.formChange({
-					name: 'selectIndex',
-					value: index
-				})
+				this.selectIndex = index
 			},
 			addEvent: function() {
 				const eventList = this.formData.eventList
@@ -185,34 +183,20 @@
 						value: ''
 					}
 				})
-				this.formChange({
-					name: 'eventList',
-					value: eventList
-				})
-				this.formChange({
-					name: 'selectIndex',
-					value: eventList.length - 1
-				})
+				this.selectIndex = eventList.length - 1
 			},
 			deleteEvent: function() {
 				const eventList = this.formData.eventList
-				eventList.splice(this.formData.selectIndex, 1)
-				this.formChange({
-					name: 'selectIndex',
-					value: 0
-				})
-				this.formChange({
-					name: 'eventList',
-					value: eventList
-				})
+				eventList.splice(this.selectIndex, 1)
+				this.selectIndex = 0
 			},
 			eventTypeChange: function(res) {
 				if (res.value === 'interface') {
-					this.formData.eventList[this.formData.selectIndex]['value'] = {
+					this.formData.eventList[this.selectIndex]['value'] = {
 						name: '点击选择接口'
 					}
 				} else if (res.value === 'normal') {
-					this.formData.eventList[this.formData.selectIndex]['value'] = {
+					this.formData.eventList[this.selectIndex]['value'] = {
 						name: '点击选择元件',
 						id: '',
 						options: [],
@@ -220,20 +204,11 @@
 						actionId: ''
 					}
 				} else {
-					this.formData.eventList[this.formData.selectIndex]['value'] = ''
+					this.formData.eventList[this.selectIndex]['value'] = ''
 				}
-				this.eventChange(res)
-			},
-			eventChange: function(res) {
-				const eventList = this.formData.eventList
-				eventList[this.formData.selectIndex][res.name] = res.value
-				this.formChange({
-					name: 'eventList',
-					value: eventList
-				})
 			},
 			normalEventChange: function(res) {
-				const v = this.formData.eventList[this.formData.selectIndex]['value']
+				const v = this.formData.eventList[this.selectIndex]['value']
 				let actionName = ''
 				for (var i = 0; i < v.options.length; i++) {
 					if (v.options.value === res.value) {
@@ -242,24 +217,14 @@
 				}
 				v['actionIndex'] = res.value
 				v['actionName'] = actionName
-				const r = {
-					name: 'value',
-					value: v
-				}
-				this.eventChange(r)
 			},
 			interfaceChange: function(res) {
-				const interfaceInfo = this.formData.eventList[this.formData.selectIndex]['value']
+				const interfaceInfo = this.formData.eventList[this.selectIndex]['value']
 				for (let i = 0; i < interfaceInfo.param.length; i++) {
 					if (interfaceInfo.param[i].key === res.name) {
 						interfaceInfo.param[i].value = res.value
 					}
 				}
-				const r = {
-					name: 'value',
-					value: interfaceInfo
-				}
-				this.eventChange(r)
 			},
 			interfaceSourceChange: function(res) {
 				if (res.value.source === 'form') {
@@ -271,13 +236,8 @@
 				this.interfaceChange(res)
 			},
 			statusChange(res) {
-				const status = this.formData.eventList[this.formData.selectIndex]['status']
+				const status = this.formData.eventList[this.selectIndex]['status']
 				status[res.name] = res.value
-				const r = {
-					name: 'status',
-					value: status
-				}
-				this.eventChange(r)
 			},
 			statusTypeChange(res) {
 				if (res.value === 'interface') {
