@@ -1,13 +1,13 @@
 <template>
 	<div>
 		<div class="form">
-			<v-text lable="名称" :value="formData.name" size="l" name="name" @formChange="formChange"></v-text>
+			<v-text lable="名称" :formData="formData" size="l" name="name"></v-text>
 		</div>
 		<div class="form">
-			<v-image lable="图片" :value="formData.data" name="data" @selectImage="selectImage"></v-image>
+			<v-image lable="图片" :formData="formData" name="data"></v-image>
 		</div>
 		<div class="form">
-			<v-number lable="宽度" :value="formData.width" name="width" @formChange="formChange"></v-number>
+			<v-number lable="宽度" :formData="formData" name="width"></v-number>
 		</div>
 		<action-form :form-data="formData" :action-key-list="actionKeyList" @form-change="formChange" @select-action-value="selectActionValue" @select-image="actionSelectImage"></action-form>
 	</div>
@@ -41,10 +41,6 @@
 			formChange: function(res) {
 				res['pname'] = 'base'
 				this.$emit('form-change', res)
-			},
-			selectImage: function(res) {
-				res['pname'] = 'base'
-				this.$emit('select-image', res)
 			},
 			actionSelectImage: function(res) {
 				this.$emit('action-select-image', res)

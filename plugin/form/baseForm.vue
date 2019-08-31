@@ -1,16 +1,16 @@
 <template>
 	<div class="plugin-form">
 		<div class="form">
-			<v-text lable="名称" :value="formData.name" size="l" name="name" @formChange="formChange"></v-text>
+			<v-text lable="名称" :formData="formData" size="l" name="name"></v-text>
 		</div>
 		<div class="form">
-			<v-text lable="默认值" :value="formData.data" size="l" name="data" @formChange="formChange"></v-text>
+			<v-text lable="默认值" :formData="formData" size="l" name="data"></v-text>
 		</div>
 		<div class="form">
-			<v-text lable="表单键" :value="formData.key" size="l" name="key" placeholder="请输入字母" @formChange="formChange"></v-text>
+			<v-text lable="表单键" :formData="formData" size="l" name="key" placeholder="请输入字母"></v-text>
 		</div>
-		<v-radio lable="表单类型" :options="typeOptions" :value="formData.type" name="type" @formChange="formChange"></v-radio>
-		<action-form :form-data="formData" :action-key-list="actionKeyList" @form-change="formChange" @select-action-value="selectActionValue"></action-form>
+		<v-radio lable="表单类型" :options="typeOptions" :formData="formData" name="type"></v-radio>
+		<action-form :form-data="formData" :action-key-list="actionKeyList" @form-change="formChange" @select-action-value="selectActionValue" @select-image="actionSelectImage"></action-form>
 		<form v-if="formData.type === 'select'">
 			<div class="form-list">
 				<div class="form-lable">选项：</div>
@@ -19,13 +19,13 @@
 			</div>
 			<div class="sub-form-list" v-if="formData.optionList && formData.optionList.length">
 				<hr/>
-				<template v-for="(item,index) in formData.optionList" v-if="formData.optionSelectIndex === index">
+				<template v-for="(item,index) in formData.optionList" v-if="optionSelectIndex === index">
 					<div class="delete-module" @click="deleteOption"></div>
 					<div class="form">
-						<v-text lable="选项名" :value="item.label" name="label" @formChange="optionChange"></v-text>
+						<v-text lable="选项名" :formData="item" name="label"></v-text>
 					</div>
 					<div class="form">
-						<v-text lable="选项值" :value="item.value" name="value" @formChange="optionChange"></v-text>
+						<v-text lable="选项值" :formData="item" name="value"></v-text>
 					</div>
 				</template>
 				<hr/>
@@ -47,6 +47,7 @@
 		},
 		data () {
 			return {
+				optionSelectIndex: 0,
 				actionKeyList: [{
 					label: '数据',
 					value: 'data',
@@ -92,17 +93,14 @@
 				this.$emit('open-interface-tree-model', 'baseAction')
 			},
 			parseClass: function(index) {
-				if (index === this.formData.optionSelectIndex) {
+				if (index === this.optionSelectIndex) {
 					return 'current'
 				} else {
 					return ''
 				}
 			},
 			selectOption: function(index) {
-				this.formChange({
-					name: 'optionSelectIndex',
-					value: index
-				})
+				this.optionSelectIndex = index
 			},
 			addOption: function() {
 				const optionList = this.formData.optionList
@@ -110,34 +108,12 @@
 					label: '',
 					value: ''
 				})
-				this.formChange({
-					name: 'optionList',
-					value: optionList
-				})
-				this.formChange({
-					name: 'optionSelectIndex',
-					value: optionList.length - 1
-				})
+				this.optionSelectIndex = optionList.length - 1
 			},
 			deleteOption: function() {
 				const optionList = this.formData.optionList
 				optionList.splice(this.formData.optionSelectIndex, 1)
-				this.formChange({
-					name: 'optionSelectIndex',
-					value: 0
-				})
-				this.formChange({
-					name: 'optionList',
-					value: optionList
-				})
-			},
-			optionChange: function(res) {
-				const optionList = this.formData.optionList
-				optionList[this.formData.optionSelectIndex][res.name] = res.value
-				this.formChange({
-					name: 'optionList',
-					value: optionList
-				})
+				this.optionSelectIndex = 0
 			}
 		}
 	}

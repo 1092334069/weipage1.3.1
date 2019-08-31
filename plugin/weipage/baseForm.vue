@@ -7,7 +7,7 @@
 			<v-text lable="描述" :formData="formData" name="describes" size="l"></v-text>
 		</div>
 		<div class="form">
-			<v-image lable="图片" :formData="formData" name="cover" @selectImage="selectImage"></v-image>
+			<v-image lable="图片" :formData="formData" name="cover"></v-image>
 		</div>
 		<div class="form">
 			<v-text lable="文件名" :formData="formData" name="pageName" size="l" placeholder="请输入字母"></v-text>
@@ -25,7 +25,7 @@
 			<template v-for="itf in formData.interfaceList" v-if="formData.selectInterfaceId === itf.interfaceId">
 				<div class="delete-module" @click="deleteInterface"></div>
 				<div class="form size-l" v-for="item in itf.param">
-					<v-input-source :lable="item.name" :value="item.value" :name="item.key" :sourceOptions="sourceOptions" @formChange="interfaceChange" @sourceChange="interfaceChange"></v-input-source>
+					<v-input-source :lable="item.name" :formData="item" name="value" :sourceOptions="sourceOptions" @formChange="interfaceChange" @sourceChange="interfaceChange"></v-input-source>
 				</div>
 			</template>
 			<hr/>
@@ -59,12 +59,6 @@
 			}
 		},
 		methods: {
-			weipageChange: function(res) {
-				this.$emit('weipage-change', res)
-			},
-			selectImage: function(res) {
-				this.$emit('select-image', res)
-			},
 			openInterfaceModel: function() {
 				this.$emit('open-interface-model','weipage')
 			},
@@ -85,10 +79,6 @@
 						}
 					}
 				}
-				this.weipageChange({
-					name: 'interfaceList',
-					value: interfaceList
-				})
 			},
 			parseClass: function(interfaceId) {
 				if (interfaceId === this.formData.selectInterfaceId) {

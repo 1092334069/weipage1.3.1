@@ -1,8 +1,8 @@
 <template>
 	<div>
-		<v-select v-if="type === 'select'" :lable="lable" :options="inputOptions" :value="value.data" @formChange="changeValue"></v-select>
-		<v-text v-else :lable="lable" :value="value.data" @formChange="changeValue"></v-text>
-		<v-select :lableWidth="sourceLableWidth" :options="sourceOptions" :value="value.source" @formChange="changeSource"></v-select>
+		<v-select v-if="type === 'select'" :lable="lable" :options="inputOptions" :formData="inputForm" name="data"></v-select>
+		<v-text v-else :lable="lable" :formData="inputForm" name="data"></v-text>
+		<v-select :lableWidth="0" :options="sourceOptions" :formData="inputForm" name="source"></v-select>
 	</div>
 </template>
 
@@ -10,6 +10,12 @@
 	export default {
 		name: "vInputSource",
 		props: {
+			formData: {
+				type: Object,
+				default: function() {
+					return {}
+				}
+			},
 			name: {
 				type: String,
 				default: ''
@@ -17,15 +23,6 @@
 			lable: {
 				type: String,
 				default: ''
-			},
-			value: {
-				type: Object,
-				default: function() {
-					return {
-						data: '',
-						source: ''
-					}
-				}
 			},
 			sourceOptions: {
 				type: Array,
@@ -45,33 +42,11 @@
 			}
 		},
 		data () {
-		    return {
-				sourceLableWidth: 0
-		    }
+		    return {}
 		},
-		methods: {
-			formChange: function(res) {
-				this.$emit('formChange', res)
-			},
-			changeValue: function(res) {
-				var r = {
-					name: this.name,
-					value: {
-						data: res.value,
-						source: this.value.source
-					}
-				}
-				this.formChange(r)
-			},
-			changeSource: function(res) {
-				var r = {
-					name: this.name,
-					value: {
-						data: this.value.data,
-						source: res.value
-					}
-				}
-				this.$emit('sourceChange', r)
+		computed: {
+			inputForm() {
+				return this.formData[this.name]
 			}
 		}
 	}
