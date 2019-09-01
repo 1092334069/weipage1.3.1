@@ -9,8 +9,10 @@
 		<div class="form">
 			<v-text lable="表单键" :formData="formData" size="l" name="key" placeholder="请输入字母"></v-text>
 		</div>
-		<v-radio lable="表单类型" :options="typeOptions" :formData="formData" name="type"></v-radio>
-		<action-form :form-data="formData" :action-key-list="actionKeyList" @form-change="formChange" @select-action-value="selectActionValue" @select-image="actionSelectImage"></action-form>
+		<div class="form">
+			<v-radio lable="表单类型" :options="typeOptions" :formData="formData" name="type"></v-radio>
+		</div>
+		<action-form :formData="formData" :action-key-list="actionKeyList" @selectActionValue="selectActionValue" @selectImage="selectImage"></action-form>
 		<form v-if="formData.type === 'select'">
 			<div class="form-list">
 				<div class="form-lable">选项：</div>
@@ -20,7 +22,7 @@
 			<div class="sub-form-list" v-if="formData.optionList && formData.optionList.length">
 				<hr/>
 				<template v-for="(item,index) in formData.optionList" v-if="optionSelectIndex === index">
-					<div class="delete-module" @click="deleteOption"></div>
+					<div class="delete-module" @click="deleteOption(index)"></div>
 					<div class="form">
 						<v-text lable="选项名" :formData="item" name="label"></v-text>
 					</div>
@@ -85,12 +87,11 @@
 		    }
 		},
 		methods: {
-			formChange: function(res) {
-				res['pname'] = 'base'
-				this.$emit('form-change', res)
+			selectImage: function(res) {
+				this.$emit('select-image', res)
 			},
-			selectActionValue: function() {
-				this.$emit('open-interface-tree-model', 'baseAction')
+			selectActionValue: function(res) {
+				this.$emit('open-interface-tree-model', res)
 			},
 			parseClass: function(index) {
 				if (index === this.optionSelectIndex) {
@@ -110,9 +111,9 @@
 				})
 				this.optionSelectIndex = optionList.length - 1
 			},
-			deleteOption: function() {
+			deleteOption: function(index) {
 				const optionList = this.formData.optionList
-				optionList.splice(this.formData.optionSelectIndex, 1)
+				optionList.splice(index, 1)
 				this.optionSelectIndex = 0
 			}
 		}

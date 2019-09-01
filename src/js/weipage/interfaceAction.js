@@ -131,30 +131,6 @@ class InterfaceAction {
 		return result
 		
 	}
-	baseActionSelectInterfaceParam(plugin, option) {
-		const result = JSON.parse(JSON.stringify(this.selectInterfaceParam(option)))
-		if (plugin) {
-			plugin.base.actionList[plugin.base.selectIndex].value = result
-		}
-	}
-	baseAttrSelectInterfaceParam(plugin, option) {
-		const result = JSON.parse(JSON.stringify(this.selectInterfaceParam(option)))
-		if (plugin) {
-			const attr = plugin.base.attrList[plugin.base.attrSelectIndex]
-			attr.name = result.name
-			attr.url = result.url
-			attr.keyList = result.keyList
-		}
-	}
-	weipageScrollSelectInterfaceParam(option) {
-		this.weiPageThis.weipage.scrollEvent.eventList[this.weiPageThis.weipage.scrollEvent.selectIndex].keyword = JSON.parse(JSON.stringify(option))
-	}
-	eventSelectStatusInterfaceParam(plugin, option) {
-		const result = this.selectInterfaceParam(option)
-		if (plugin) {
-			plugin.event.eventList[plugin.event.selectIndex].status.key = result
-		}
-	}
 }
 
 const interfaceAction = new InterfaceAction()

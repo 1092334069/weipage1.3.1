@@ -181,12 +181,7 @@
 			}
 		},
 		methods: {
-			formChange: function(res) {
-				res['pname'] = 'style'
-				this.$emit('form-change', res)
-			},
 			selectImage: function(res) {
-				res['pname'] = 'style'
 				this.$emit('select-image', res)
 			},
 			triggerForm: function(key) {

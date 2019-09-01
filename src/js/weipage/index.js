@@ -108,12 +108,6 @@ var weipage = new Vue({
 		}
 	},
 	methods: {
-		weipageChange(res) {
-			this.weipage[res.name] = res.value
-		},
-		formChange(res) {
-			pluginUpdate(res, this.editForm)
-		},
 		selectPlugin(pluginId) {
 			this.changeFormTab('base')
 			this.selectPluginId = pluginId
@@ -177,23 +171,12 @@ var weipage = new Vue({
 		closeInterfaceModel() {
 			this.interfaceModel = false
 		},
-		openInterfaceTreeModel(form) {
+		openInterfaceTreeModel(res) {
 			this.interfaceTreeModel = true
-			if (form === 'baseAction') {
-				callbackAction.selectInterfaceParam = (option) => {
-					interfaceAction.baseActionSelectInterfaceParam(this.getSelectPlugin(), option)
-				}
-			} else if (form === 'baseAttr') {
-				callbackAction.selectInterfaceParam = (option) => {
-					interfaceAction.baseAttrSelectInterfaceParam(this.getSelectPlugin(), option)
-				}
-			} else if (form === 'weipageScroll') {
-				callbackAction.selectInterfaceParam = (option) => {
-					interfaceAction.weipageScrollSelectInterfaceParam(option)
-				}
-			} else {
-				callbackAction.selectInterfaceParam = (option) => {
-					interfaceAction.eventSelectStatusInterfaceParam(this.getSelectPlugin(),option)
+			callbackAction.selectInterfaceParam = (option) => {
+				const optionObject = JSON.parse(JSON.stringify(option))
+				for (let key in optionObject) {
+					res.formData[res.name][key] = optionObject[key]
 				}
 			}
 		},
@@ -233,42 +216,13 @@ var weipage = new Vue({
 		closeImageModel: function() {
 			this.imageModel = false
 		},
-		weipageImageUpload(res) {
+		selectImage(res) {
 			callbackAction.selectImage = (url) => {
-				this.weipageChange({
-					name: res.name,
-					value: url
-				})
+				res.formData[res.name] = url
 			}
 			this.openImageModel()
 		},
-		pluginImageUpload(res) {
-			callbackAction.selectImage = (url) => {
-				this.formChange({
-					pname: res.pname,
-					name: res.name,
-					value: url
-				})
-			}
-			this.openImageModel()
-		},
-		pluginActionImageUpload(res) {
-			callbackAction.selectImage = (url) => {
-				const plugin = this.getSelectPlugin()
-				for (let i = 0; i < plugin.base.actionList.length; i++) {
-					if (i === plugin.base.selectIndex) {
-						plugin.base.actionList[i].value = url
-					}
-				}
-				this.formChange({
-					pname: 'base',
-					name: 'actionList',
-					value: plugin.base.actionList
-				})
-			}
-			this.openImageModel()
-		},
-		selectImage(url) {
+		imageModelSelect(url) {
 			callbackAction.selectImage(url)
 			this.closeImageModel()
 		},

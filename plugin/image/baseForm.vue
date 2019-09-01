@@ -4,12 +4,12 @@
 			<v-text lable="名称" :formData="formData" size="l" name="name"></v-text>
 		</div>
 		<div class="form">
-			<v-image lable="图片" :formData="formData" name="data"></v-image>
+			<v-image lable="图片" :formData="formData" name="data" @selectImage="selectImage"></v-image>
 		</div>
 		<div class="form">
 			<v-number lable="宽度" :formData="formData" name="width"></v-number>
 		</div>
-		<action-form :form-data="formData" :action-key-list="actionKeyList" @form-change="formChange" @select-action-value="selectActionValue" @select-image="actionSelectImage"></action-form>
+		<action-form :formData="formData" :action-key-list="actionKeyList" @selectActionValue="selectActionValue" @selectImage="selectImage"></action-form>
 	</div>
 </template>
 
@@ -38,15 +38,11 @@
 		    }
 		},
 		methods: {
-			formChange: function(res) {
-				res['pname'] = 'base'
-				this.$emit('form-change', res)
+			selectImage: function(res) {
+				this.$emit('select-image', res)
 			},
-			actionSelectImage: function(res) {
-				this.$emit('action-select-image', res)
-			},
-			selectActionValue: function() {
-				this.$emit('open-interface-tree-model', 'baseAction')
+			selectActionValue: function(res) {
+				this.$emit('open-interface-tree-model', res)
 			}
 		}
 	}

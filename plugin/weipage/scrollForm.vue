@@ -18,7 +18,7 @@
 				<template v-if="item.type === 'normal'">
 					<div class="form-list">
 						<span class="form-lable">元件：</span>
-						<div class="form-item" @click="openPluginTreeModel">{{item.value.name}}</div>
+						<div class="form-item" @click="openPluginTreeModel(item)">{{item.value.name}}</div>
 					</div>
 					<template v-if="item.value.options && item.value.options.length">
 						<div class="form">
@@ -39,7 +39,7 @@
 					</template>
 					<div class="form-list">
 						<span class="form-lable">累加参数：</span>
-						<div class="form-item" @click="openInteraceTreeModel">{{item.keyword.name}}</div>
+						<div class="form-item" @click="openInteraceTreeModel(item)">{{item.keyword.name}}</div>
 					</div>
 				</template>
 			</template>
@@ -60,6 +60,7 @@
 		},
 		data () {
 		    return {
+				selectIndex: 0,
 				eventTypeOptions: [{
 					label: '接口事件',
 					value: 'interface'
@@ -93,26 +94,15 @@
 			}
 		},
 		methods: {
-			weipageChange: function(res) {
-				const scrollEvent = this.formData.scrollEvent
-				scrollEvent[res.name] = res.value
-				this.$emit('weipage-change', {
-					name: 'scrollEvent',
-					value: scrollEvent
-				})
-			},
 			parseClass: function(index) {
-				if (index === this.formData.scrollEvent.selectIndex) {
+				if (index === this.selectIndex) {
 					return 'current'
 				} else {
 					return ''
 				}
 			},
 			selectEvent: function(index) {
-				this.weipageChange({
-					name: 'selectIndex',
-					value: index
-				})
+				this.selectIndex = index
 			},
 			addEvent: function() {
 				const eventList = this.formData.scrollEvent.eventList
@@ -129,42 +119,19 @@
 						keyList: []
 					}
 				})
-				this.weipageChange({
-					name: 'eventList',
-					value: eventList
-				})
-				this.weipageChange({
-					name: 'selectIndex',
-					value: eventList.length - 1
-				})
+				this.selectIndex = eventList.length - 1
 			},
-			deleteEvent: function() {
+			deleteEvent: function(index) {
 				const eventList = this.formData.scrollEvent.eventList
-				eventList.splice(this.formData.scrollEvent.selectIndex, 1)
-				this.weipageChange({
-					name: 'selectIndex',
-					value: 0
-				})
-				this.weipageChange({
-					name: 'eventList',
-					value: eventList
-				})
-			},
-			eventChange: function(res) {
-				const eventList = this.formData.scrollEvent.eventList
-				eventList[this.formData.scrollEvent.selectIndex][res.name] = res.value
-				this.weipageChange({
-					name: 'eventList',
-					value: eventList
-				})
+				eventList.splice(index, 1)
 			},
 			eventTypeChange: function(res) {
 				if (res.value === 'interface') {
-					this.formData.scrollEvent.eventList[this.formData.scrollEvent.selectIndex]['value'] = {
+					this.formData.scrollEvent.eventList[this.selectIndex]['value'] = {
 						name: '点击选择接口'
 					}
 				} else if (res.value === 'normal') {
-					this.formData.scrollEvent.eventList[this.formData.scrollEvent.selectIndex]['value'] = {
+					this.formData.scrollEvent.eventList[this.selectIndex]['value'] = {
 						name: '点击选择元件',
 						id: '',
 						options: [],
@@ -172,12 +139,11 @@
 						actionId: ''
 					}
 				} else {
-					this.formData.scrollEvent.eventList[this.formData.scrollEvent.selectIndex]['value'] = ''
+					this.formData.scrollEvent.eventList[this.selectIndex]['value'] = ''
 				}
-				this.eventChange(res)
 			},
 			normalEventChange: function(val) {
-				const v = this.formData.scrollEvent.eventList[this.formData.scrollEvent.selectIndex]['value']
+				const v = this.formData.scrollEvent.eventList[this.selectIndex]['value']
 				let actionName = ''
 				for (var i = 0; i < v.options.length; i++) {
 					if (v.options.value === res.value) {
@@ -186,33 +152,29 @@
 				}
 				v['actionIndex'] = val
 				v['actionName'] = actionName
-				const r = {
-					name: 'value',
-					value: v
-				}
-				this.eventChange(r)
 			},
 			interfaceChange: function(val) {
-				const interfaceInfo = this.formData.scrollEvent.eventList[this.formData.scrollEvent.selectIndex]['value']
+				const interfaceInfo = this.formData.scrollEvent.eventList[this.selectIndex]['value']
 				for (let i = 0; i < interfaceInfo.param.length; i++) {
 					if (interfaceInfo.param[i].key === res.name) {
 						interfaceInfo.param[i].value = res.value
 					}
 				}
-				const r = {
-					name: 'value',
-					value: interfaceInfo
-				}
-				this.eventChange(r)
 			},
-			openPluginTreeModel: function() {
-				this.$emit('open-plugin-tree-model', 'weipageScroll')
+			openPluginTreeModel: function(formData) {
+				this.$emit('open-interface-tree-model', {
+					formData: formData,
+					name: 'value'
+				})
 			},
 			openInterfaceModel: function() {
 				this.$emit('open-interface-model', 'weipageScroll')
 			},
-			openInteraceTreeModel: function() {
-				this.$emit('open-interface-tree-model', 'weipageScroll')
+			openInteraceTreeModel: function(formData) {
+				this.$emit('open-interface-tree-model', {
+					formData: formData,
+					name: 'keyword'
+				})
 			}
 		},
 		computed: {

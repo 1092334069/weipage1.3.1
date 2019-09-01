@@ -7,7 +7,8 @@
 		</div>
 		<div class="sub-form-list" v-if="formData.countEvent.eventList && formData.countEvent.eventList.length">
 			<hr/>
-			<template v-for="(item,index) in formData.countEvent.eventList" v-if="formData.countEvent.selectIndex === index">
+			<template v-for="(item,index) in formData.countEvent.eventList" v-if="selectIndex === index">
+				<div class="delete-module" @click="deleteOption(index)"></div>
 				<div class="form">
 					<v-text lable="名称" :formData="item" name="name"></v-text>
 				</div>
@@ -40,6 +41,7 @@
 		},
 		data () {
 		    return {
+				selectIndex: 0,
 				ruleOptions: [{
 					label: '自增',
 					value: 'add'
@@ -50,26 +52,15 @@
 			}
 		},
 		methods: {
-			weipageChange: function(res) {
-				const countEvent = this.formData.countEvent
-				countEvent[res.name] = res.value
-				this.$emit('weipage-change', {
-					name: 'countEvent',
-					value: countEvent
-				})
-			},
 			parseClass: function(index) {
-				if (index === this.formData.countEvent.selectIndex) {
+				if (index === this.selectIndex) {
 					return 'current'
 				} else {
 					return ''
 				}
 			},
 			selectEvent: function(index) {
-				this.weipageChange({
-					name: 'selectIndex',
-					value: index
-				})
+				this.selectIndex = index
 			},
 			addEvent: function() {
 				const eventList = this.formData.countEvent.eventList
@@ -81,26 +72,12 @@
 					initial: 1,
 					cardinal: 1
 				})
-				this.weipageChange({
-					name: 'eventList',
-					value: eventList
-				})
-				this.weipageChange({
-					name: 'selectIndex',
-					value: eventList.length - 1
-				})
+				this.selectIndex = eventList.length - 1
 			},
-			deleteEvent: function() {
+			deleteEvent: function(index) {
 				const eventList = this.formData.countEvent.eventList
-				eventList.splice(this.formData.countEvent.selectIndex, 1)
-				this.weipageChange({
-					name: 'selectIndex',
-					value: 0
-				})
-				this.weipageChange({
-					name: 'eventList',
-					value: eventList
-				})
+				eventList.splice(index, 1)
+				this.selectIndex = 0
 			}
 		}
 	}

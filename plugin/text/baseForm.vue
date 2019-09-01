@@ -6,7 +6,7 @@
 		<div class="form">
 			<v-text lable="默认值" :formData="formData" name="data" size="xl"></v-text>
 		</div>
-		<action-form :form-data="formData" :action-key-list="actionKeyList" @form-change="formChange" @select-action-value="selectActionValue"></action-form>
+		<action-form :formData="formData" :action-key-list="actionKeyList" @selectActionValue="selectActionValue" @selectImage="selectImage"></action-form>
 	</div>
 </template>
 
@@ -31,12 +31,11 @@
 			}
 		},
 		methods: {
-			formChange: function(res) {
-				res['pname'] = 'base'
-				this.$emit('form-change', res)
+			selectImage: function(res) {
+				this.$emit('select-image', res)
 			},
-			selectActionValue: function() {
-				this.$emit('open-interface-tree-model', 'baseAction')
+			selectActionValue: function(res) {
+				this.$emit('open-interface-tree-model', res)
 			}
 		}
 	}

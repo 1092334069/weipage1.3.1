@@ -52,7 +52,7 @@
 						<div class="form" v-if="item.status.type === 'interface'">
 							<div class="form-perch">
 								<span class="lable">触发键：</span>
-								<div class="perch-btn" @click="openInterfaceTreeModel">{{item.status.key.name}}</div>
+								<div class="perch-btn" @click="openInterfaceTreeModel(item.status)">{{item.status.key.name}}</div>
 							</div>
 						</div>
 						<div class="form" v-else>
@@ -257,8 +257,11 @@
 				}
 				this.statusChange(res)
 			},
-			openInterfaceTreeModel: function() {
-				this.$emit('open-interface-tree-model', 'event')
+			openInterfaceTreeModel: function(formData) {
+				this.$emit('open-interface-tree-model', {
+					formData: formData,
+					name: 'key'
+				})
 			}
 		},
 		computed: {

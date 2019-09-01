@@ -6,7 +6,7 @@
 		<div class="form">
 			<v-radio lable="类型" :options="typeList" :formData="formData" name="type"></v-radio>
 		</div>
-		<action-form :form-data="formData" :action-key-list="actionKeyList" @form-change="formChange" @select-action-value="selectActionValue" @select-image="actionSelectImage"></action-form>
+		<action-form :formData="formData" :action-key-list="actionKeyList" @selectActionValue="selectActionValue" @selectImage="selectImage"></action-form>
 		<form ref="actionForm">
 			<div class="form-list">
 				<div class="form-lable">属性：</div>
@@ -15,15 +15,15 @@
 			</div>
 			<div class="sub-form-list" v-if="formData.attrList && formData.attrList.length">
 				<hr/>
-				<template v-for="(item,index) in formData.attrList" v-if="formData.attrSelectIndex === index">
+				<template v-for="(item,index) in formData.attrList" v-if="attrSelectIndex === index">
 					<div class="delete-module" @click="deleteAttr"></div>
 					<div class="form">
-						<v-text lable="属性键" :value="item.key" name="key" placeholder="请输入字母" @formChange="attrChange"></v-text>
+						<v-text lable="属性键" :formData="item" name="key" placeholder="请输入字母"></v-text>
 					</div>
 					<div class="form">
 						<div class="form-perch">
 							<span class="lable">属性值：</span>
-							<div class="perch-btn" @click="selectAttrValue">{{item.name}}</div>
+							<div class="perch-btn" @click="selectAttrValue(formData.attrList, index)">{{item.name}}</div>
 						</div>
 					</div>
 				</template>
@@ -48,6 +48,7 @@
 		},
 		data () {
 		    return {
+		    	attrSelectIndex: 0,
 				typeList: [{
 					label: '普通',
 					value: 'normal'
@@ -153,70 +154,44 @@
 			}
 		},
 		methods: {
-			formChange: function(res) {
-				res['pname'] = 'base'
-				this.$emit('form-change', res)
+			selectImage: function(res) {
+				this.$emit('select-image', res)
 			},
-			actionSelectImage: function(res) {
-				this.$emit('action-select-image', res)
-			},
-			selectActionValue: function() {
-				this.$emit('open-interface-tree-model', 'baseAction')
+			selectActionValue: function(res) {
+				this.$emit('open-interface-tree-model', res)
 			},
 			parseClass: function(index) {
-				if (index === this.formData.attrSelectIndex) {
+				if (index === this.attrSelectIndex) {
 					return 'current'
 				} else {
 					return ''
 				}
 			},
-			selectAttrValue: function() {
-				this.$emit('open-interface-tree-model', 'baseAttr')
+			selectAttrValue: function(list, index) {
+				this.$emit('open-interface-tree-model', {
+					formData: list,
+					name: index
+				})
 			},
 			selectAttr: function(index) {
-				this.formChange({
-					name: 'attrSelectIndex',
-					value: index
-				})
+				this.attrSelectIndex = index
 			},
 			addAttr: function() {
 				const attrList = this.formData.attrList
 				const uuid = getLocalUuid()
 				attrList.push({
 					attrId: uuid,
-					attrKey: '',
+					key: '',
 					name: '请选择属性',
 					url: '',
 					keyList: []
 				})
-				this.formChange({
-					name: 'attrList',
-					value: attrList
-				})
-				this.formChange({
-					name: 'attrSelectIndex',
-					value: attrList.length - 1
-				})
+				this.attrSelectIndex = attrList.length - 1
 			},
 			deleteAttr: function() {
 				const attrList = this.formData.attrList
-				attrList.splice(this.formData.attrSelectIndex, 1)
-				this.formChange({
-					name: 'attrSelectIndex',
-					value: 0
-				})
-				this.formChange({
-					name: 'attrList',
-					value: attrList
-				})
-			},
-			attrChange: function(res) {
-				const attrList = this.formData.attrList
-				attrList[this.formData.attrSelectIndex][res.name] = res.value
-				this.formChange({
-					name: 'attrList',
-					value: attrList
-				})
+				attrList.splice(this.attrSelectIndex, 1)
+				this.attrSelectIndex = 0
 			}
 		}
 	}

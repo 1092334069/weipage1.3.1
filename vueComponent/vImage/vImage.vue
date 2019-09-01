@@ -37,6 +37,7 @@
 		methods: {
 			selectImage: function() {
 				this.$emit('selectImage', {
+					formData: this.formData,
 					name: this.name
 				})
 			}

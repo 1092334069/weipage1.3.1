@@ -7,7 +7,7 @@
 		</div>
 		<div class="sub-form-list" v-if="formData.actionList && formData.actionList.length">
 			<hr/>
-			<template v-for="(item,index) in formData.actionList" v-if="formData.selectIndex === index">
+			<template v-for="(item,index) in formData.actionList" v-if="selectIndex === index">
 				<div class="delete-module" @click="deleteAction"></div>
 				<div class="form">
 					<v-text lable="响应名" :formData="item" name="name"></v-text>
@@ -32,7 +32,7 @@
 				<div class="form" v-else-if="item.type === 'interface'">
 					<div class="action-interface">
 						<span class="lable">响应值：</span>
-						<div class="interface-btn" @click="selectActionValue">{{item.value.name}}</div>
+						<div class="interface-btn" @click="selectActionValue(item)">{{item.value.name}}</div>
 					</div>
 				</div>
 				<div class="form" v-else>
@@ -65,6 +65,7 @@
 		},
 		data () {
 		    return {
+		    	selectIndex: 0,
 				actionTypeList: [{
 					label: '接口',
 					value: 'interface'
@@ -91,7 +92,7 @@
 			actionValueOptions: function() {
 				let r = []
 				for (let i = 0; i < this.actionKeyList.length; i++) {
-					if (this.actionKeyList[i].value === this.formData.actionList[this.formData.selectIndex].key) {
+					if (this.actionKeyList[i].value === this.formData.actionList[this.selectIndex].key) {
 						r = this.actionKeyList[i].options
 					}
 				}
@@ -100,7 +101,7 @@
 			actionKeyType: function() {
 				let r = ''
 				for (let i = 0; i < this.actionKeyList.length; i++) {
-					if (this.actionKeyList[i].value === this.formData.actionList[this.formData.selectIndex].key) {
+					if (this.actionKeyList[i].value === this.formData.actionList[this.selectIndex].key) {
 						r = this.actionKeyList[i].type
 					}
 				}
@@ -108,34 +109,25 @@
 			}
 		},
 		methods: {
-			formChange: function(res) {
-				this.$emit('form-change', res)
-			},
-			selectImage: function(res) {
-				this.$emit('select-image', res)
-			},
 			parseClass: function(index) {
-				if (index === this.formData.selectIndex) {
+				if (index === this.selectIndex) {
 					return 'current'
 				} else {
 					return ''
 				}
 			},
 			selectAction: function(index) {
-				this.formChange({
-					name: 'selectIndex',
-					value: index
-				})
+				this.selectIndex = selectIndex
 			},
 			actionTypeChange: function(val) {
 				if (val === 'interface') {
-					this.formData.actionList[this.formData.selectIndex]['value'] = {
+					this.formData.actionList[this.selectIndex]['value'] = {
 						name: '点击选择接口参数',
 						url: '',
 						keyList: []
 					}
 				} else {
-					this.formData.actionList[this.formData.selectIndex]['value'] = ''
+					this.formData.actionList[this.selectIndex]['value'] = ''
 				}
 			},
 			addAction: function() {
@@ -153,29 +145,21 @@
 						keyList: []
 					}
 				})
-				this.formChange({
-					name: 'actionList',
-					value: actionList
-				})
-				this.formChange({
-					name: 'selectIndex',
-					value: actionList.length - 1
-				})
+				this.selectIndex = actionList.length - 1
 			},
-			selectActionValue: function() {
-				this.$emit('select-action-value')
+			selectImage: function(res) {
+				this.$emit('selectImage', res)
+			},
+			selectActionValue: function(formData) {
+				this.$emit('selectActionValue', {
+					formData: formData,
+					name: 'value'
+				})
 			},
 			deleteAction: function() {
 				const actionList = this.formData.actionList
 				actionList.splice(this.formData.selectIndex, 1)
-				this.formChange({
-					name: 'selectIndex',
-					value: 0
-				})
-				this.formChange({
-					name: 'actionList',
-					value: actionList
-				})
+				this.selectIndex = 0
 			}
 		}
 	}
