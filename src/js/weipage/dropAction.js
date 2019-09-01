@@ -8,6 +8,7 @@ const dropData = {
 	offsetX: 0,
 	offsetTop: 0,
 	offsetLeft: 0,
+	pluginId: 0
 }
 
 class DropAction {
@@ -35,12 +36,14 @@ class DropAction {
 		$(document).on('mousedown', '.plugin .drop-icon', function(e) {
 			$sourcePlugin = $(this).closest('.plugin')
 			$(this).closest('.plugin').addClass('drop')
+			dropData.pluginId = $(this).closest('.plugin').attr('data-id')
 			_this.mouseDownDropEvent(e, $(this).closest('.plugin'))
 			e.preventDefault()
 			e.stopPropagation()
 		})
 
 		$(document).on('mousedown', '.plugin .resize-icon', function(e) {
+			dropData.pluginId = $(this).closest('.plugin').attr('data-id')
 			_this.mouseDownResizeEvent(this)
 			e.preventDefault()
 			e.stopPropagation()
@@ -89,7 +92,7 @@ class DropAction {
 	}
 	mouseMoveResizeEvent(e) {
 		const r = this.getCoordinate(e)
-		this.option.resizeCallback({
+		this.option.resizeCallback(dropData.pluginId, {
 			width: r.left - dropData.offsetLeft,
 			height: r.top - dropData.offsetTop
 		})
@@ -99,7 +102,6 @@ class DropAction {
 			const offset = $dropPlugin.offset()
 			const width = $dropPlugin.outerWidth(true)
 			const height = $dropPlugin.outerHeight(true)
-			const pluginId = $dropPlugin.attr('data-id')
 			const parentPlugin = $sourcePlugin.parents('.plugin')
 			let parentPluginId = ''
 			if (parentPlugin.length) {
@@ -107,7 +109,7 @@ class DropAction {
 			}
 			this.option.mouseUpCallback({
 				parentPluginId,
-				pluginId,
+				pluginId: dropData.pluginId,
 				left: offset.left,
 				top: offset.top,
 				right: offset.left + width,

@@ -289,9 +289,10 @@ dropAction.init({
 		const ret = viewAction.operationView(res)
 		pluginMove(weipage, ret.type, ret.pluginId, ret.toPluginId)
 	},
-	resizeCallback: (res) => {
-		if (res) {
-			const plugin = weipage.getSelectPlugin()
+	resizeCallback: (pluginId, res) => {
+		console.log(pluginId)
+		if (pluginId && res) {
+			const plugin = pluginSearch(weipage, pluginId)
 			if (res.width && res.width > 0) {
 				plugin.style.width = res.width
 			}
