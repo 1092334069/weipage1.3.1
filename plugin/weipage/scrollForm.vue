@@ -142,7 +142,7 @@
 					this.formData.scrollEvent.eventList[this.selectIndex]['value'] = ''
 				}
 			},
-			normalEventChange: function(val) {
+			normalEventChange: function(res) {
 				const v = this.formData.scrollEvent.eventList[this.selectIndex]['value']
 				let actionName = ''
 				for (var i = 0; i < v.options.length; i++) {
@@ -150,10 +150,9 @@
 						actionName = v.options.label
 					}
 				}
-				v['actionIndex'] = val
 				v['actionName'] = actionName
 			},
-			interfaceChange: function(val) {
+			interfaceChange: function(res) {
 				const interfaceInfo = this.formData.scrollEvent.eventList[this.selectIndex]['value']
 				for (let i = 0; i < interfaceInfo.param.length; i++) {
 					if (interfaceInfo.param[i].key === res.name) {
@@ -162,7 +161,7 @@
 				}
 			},
 			openPluginTreeModel: function(formData) {
-				this.$emit('open-interface-tree-model', {
+				this.$emit('open-plugin-tree-model', {
 					formData: formData,
 					name: 'value'
 				})

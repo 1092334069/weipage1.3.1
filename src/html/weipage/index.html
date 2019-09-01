@@ -32,10 +32,26 @@
 				<div class="view-page-head" @click="selectPlugin('')"></div>
 				<div class="view-page-content">
 					<template v-for="item in pluginList">
-						<panel-view v-if="item.pluginType == 'panel'" :view-data="item" :select-plugin-id="selectPluginId"></panel-view>
-						<text-view v-else-if="item.pluginType == 'text'" :view-data="item" :select-plugin-id="selectPluginId"></text-view>
-						<image-view v-else-if="item.pluginType == 'image'" :view-data="item" :select-plugin-id="selectPluginId"></image-view>
-						<form-view v-else-if="item.pluginType == 'form'" :view-data="item" :select-plugin-id="selectPluginId"></form-view>
+						<panel-view
+							v-if="item.pluginType == 'panel'"
+							:view-data="item"
+							:select-plugin-id="selectPluginId">
+						</panel-view>
+						<text-view
+							v-else-if="item.pluginType == 'text'"
+							:view-data="item"
+							:select-plugin-id="selectPluginId">
+						</text-view>
+						<image-view
+							v-else-if="item.pluginType == 'image'"
+							:view-data="item"
+							:select-plugin-id="selectPluginId">
+						</image-view>
+						<form-view 
+							v-else-if="item.pluginType == 'form'"
+							:view-data="item"
+							:select-plugin-id="selectPluginId">
+						</form-view>
 					</template>
 				</div>
 			</div>
@@ -54,17 +70,51 @@
 				</ul>
 				<div class="remove-plugin" @click="removePlugin(editForm.pluginId)"></div>
 				<template v-if="selectForm == 'base'">
-					<panel-base-form v-if="editForm.pluginType == 'panel'" :form-data="editForm.base" @open-interface-tree-model="openInterfaceTreeModel" @action-image="selectImage"></panel-base-form>
-					<text-base-form v-else-if="editForm.pluginType == 'text'" :form-data="editForm.base" @open-interface-tree-model="openInterfaceTreeModel"></text-base-form>
-					<image-base-form v-else-if="editForm.pluginType == 'image'" :form-data="editForm.base" @open-interface-tree-model="openInterfaceTreeModel" @select-image="selectImage" @select-image="selectImage"></image-base-form>
-					<form-base-form v-else-if="editForm.pluginType == 'form'" :form-data="editForm.base" @open-interface-tree-model="openInterfaceTreeModel"></form-base-form>
+					<panel-base-form
+						v-if="editForm.pluginType == 'panel'"
+						:form-data="editForm.base"
+						@open-interface-tree-model="openInterfaceTreeModel"
+						@action-image="selectImage">
+					</panel-base-form>
+					<text-base-form
+						v-else-if="editForm.pluginType == 'text'"
+						:form-data="editForm.base"
+						@open-interface-tree-model="openInterfaceTreeModel">
+					</text-base-form>
+					<image-base-form
+						v-else-if="editForm.pluginType == 'image'"
+						:form-data="editForm.base"
+						@open-interface-tree-model="openInterfaceTreeModel"
+						@select-image="selectImage">
+					</image-base-form>
+					<form-base-form
+						v-else-if="editForm.pluginType == 'form'"
+						:form-data="editForm.base"
+						@open-interface-tree-model="openInterfaceTreeModel">
+					</form-base-form>
 				</template>
 				<template v-if="selectForm == 'style'">
-					<panel-style-form v-if="editForm.pluginType == 'panel'" :form-data="editForm.style" @select-image="selectImage"></panel-style-form>
-					<form-style-form v-else-if="editForm.pluginType == 'form'" :form-data="editForm.style"></form-style-form>
+					<panel-style-form
+						v-if="editForm.pluginType == 'panel'"
+						:form-data="editForm.style"
+						@select-image="selectImage">
+					</panel-style-form>
+					<form-style-form
+						v-else-if="editForm.pluginType == 'form'"
+						:form-data="editForm.style">
+					</form-style-form>
 				</template>
 				<template v-if="selectForm == 'event'">
-					<panel-event-form v-if="editForm.pluginType == 'panel'" :form-data="editForm.event" :base-data="editForm.base" :weipage-data="weipage" @open-interface-model="openInterfaceModel" @open-plugin-tree-model="openPluginTreeModel" @open-interface-tree-model="openInterfaceTreeModel" @open-form-tree-model="openFormTreeModel"></panel-event-form>
+					<panel-event-form
+						v-if="editForm.pluginType == 'panel'"
+						:form-data="editForm.event"
+						:base-data="editForm.base"
+						:weipage-data="weipage"
+						@open-interface-model="openInterfaceModel"
+						@open-plugin-tree-model="openPluginTreeModel"
+						@open-interface-tree-model="openInterfaceTreeModel"
+						@open-form-tree-model="openFormTreeModel">
+					</panel-event-form>
 				</template>
 			</div>
 			<div class="edit-page" v-else>
@@ -73,9 +123,23 @@
 					<li :class="{current: selectForm == 'scroll'}" @click="changeFormTab('scroll')">滚动条</li>
 					<li :class="{current: selectForm == 'count'}" @click="changeFormTab('count')">计数器</li>
 				</ul>
-				<weipage-base-form v-if="selectForm == 'base'" :form-data="weipage" @open-interface-model="openInterfaceModel" @select-image="selectImage"></weipage-base-form>
-				<weipage-scroll-form v-else-if="selectForm == 'scroll'" :form-data="weipage"  @open-plugin-tree-model="openPluginTreeModel" @open-interface-model="openInterfaceModel" @open-interface-tree-model="openInterfaceTreeModel"></weipage-scroll-form>
-				<weipage-count-form v-else-if="selectForm == 'count'" :form-data="weipage"></weipage-count-form>
+				<weipage-base-form
+					v-if="selectForm == 'base'"
+					:form-data="weipage"
+					@open-interface-model="openInterfaceModel"
+					@select-image="selectImage">
+				</weipage-base-form>
+				<weipage-scroll-form
+					v-else-if="selectForm == 'scroll'"
+					:form-data="weipage" 
+					@open-plugin-tree-model="openPluginTreeModel"
+					@open-interface-model="openInterfaceModel"
+					@open-interface-tree-model="openInterfaceTreeModel">
+				</weipage-scroll-form>
+				<weipage-count-form
+					v-else-if="selectForm == 'count'"
+					:form-data="weipage">
+				</weipage-count-form>
 			</div>
 
 			<ul class="foot-btn-list">
@@ -106,21 +170,30 @@
 			<Modal
 				v-model="pluginTreeModel"
 				title="插件树">
-				<plugin-tree :plugin-list="pluginList" :select-plugin-id="selectPluginId" @plugin-tree-select="pluginTreeSelect"></plugin-tree>
+				<plugin-tree
+					:plugin-list="pluginList"
+					:select-plugin-id="selectPluginId"
+					@plugin-tree-select="pluginTreeSelect">
+				</plugin-tree>
 			</Modal>
 
 			<Modal
 				v-model="interfaceTreeModel"
 				title="接口树">
-				<interface-tree :interface-list="interfaceTree" @select-interface-param="selectInterfaceParam"></interface-tree>
+				<interface-tree
+					:interface-list="interfaceTree"
+					@select-interface-param="selectInterfaceParam">
+				</interface-tree>
 			</Modal>
 
 			<Modal
 				v-model="formTreeModel"
 				title="表单树">
-				<form-tree :plugin-list="pluginList" @form-tree-select="formTreeSelect"></form-tree>
+				<form-tree
+					:plugin-list="pluginList"
+					@form-tree-select="formTreeSelect">
+				</form-tree>
 			</Modal>
-
 		</div>
 	</body>
 </html>

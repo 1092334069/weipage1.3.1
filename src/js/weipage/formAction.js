@@ -104,40 +104,7 @@ function pluginRemove(weipage, pluginId) {
 	})
 }
 
-function eventPluginTreeSelect(weipage, pluginId) {
-	const selectPluginDetail = JSON.parse(JSON.stringify(pluginSearch(weipage, pluginId)))
-	const pluginDetail = pluginSearch(weipage, weipage.selectPluginId)
-	if (selectPluginDetail) {
-		const eventOptions = []
-		for (let i = 0; i < selectPluginDetail.base.actionList.length; i++){
-			if (selectPluginDetail.base.actionList[i].condition === 'event') {
-				eventOptions.push({
-					label: selectPluginDetail.base.actionList[i].name,
-					value: selectPluginDetail.base.actionList[i].actionId
-				})
-			}
-		}
-		if (eventOptions.length) {
-			pluginDetail.event.eventList[pluginDetail.event.selectIndex].value = {
-				name: selectPluginDetail.base.name,
-				id: pluginId,
-				options: eventOptions,
-				actionName: eventOptions[0].label,
-				actionId: eventOptions[0].value
-			}
-		} else {
-			pluginDetail.event.eventList[pluginDetail.event.selectIndex].value = {
-				name: selectPluginDetail.base.name,
-				id: pluginId,
-				options: [],
-				actionName: '',
-				actionId: ''
-			}
-		}
-	}
-}
-
-function weipageScrollPluginTreeSelect(weipage, pluginId) {
+function pluginTreeSelect(weipage, option, pluginId) {
 	const selectPluginDetail = JSON.parse(JSON.stringify(pluginSearch(weipage, pluginId)))
 	if (selectPluginDetail) {
 		const eventOptions = []
@@ -150,7 +117,7 @@ function weipageScrollPluginTreeSelect(weipage, pluginId) {
 			}
 		}
 		if (eventOptions.length) {
-			weipage.weipage.scrollEvent.eventList[weipage.weipage.scrollEvent.selectIndex].value = {
+			option.formData[option.name] = {
 				name: selectPluginDetail.base.name,
 				id: pluginId,
 				options: eventOptions,
@@ -158,7 +125,7 @@ function weipageScrollPluginTreeSelect(weipage, pluginId) {
 				actionId: eventOptions[0].value
 			}
 		} else {
-			weipage.weipage.scrollEvent.eventList[weipage.weipage.scrollEvent.selectIndex].value = {
+			option.formData[option.name] = {
 				name: selectPluginDetail.base.name,
 				id: pluginId,
 				options: [],
@@ -189,7 +156,6 @@ export {
 	pluginSearch,
 	pluginMove,
 	pluginRemove,
-	eventPluginTreeSelect,
-	weipageScrollPluginTreeSelect,
+	pluginTreeSelect,
 	formTreeSelect
 }

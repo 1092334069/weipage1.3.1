@@ -117,7 +117,7 @@
 				}
 			},
 			selectAction: function(index) {
-				this.selectIndex = selectIndex
+				this.selectIndex = index
 			},
 			actionTypeChange: function(val) {
 				if (val === 'interface') {

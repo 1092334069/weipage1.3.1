@@ -10,7 +10,7 @@ import '../../../plugin'
 import '../../vue'
 
 import { commonAction } from '../commonAction.js'
-import { pluginUpdate, pluginSearch, pluginMove, pluginRemove, eventPluginTreeSelect, weipageScrollPluginTreeSelect, formTreeSelect } from './formAction.js'
+import { pluginUpdate, pluginSearch, pluginMove, pluginRemove, pluginTreeSelect, formTreeSelect } from './formAction.js'
 import { createPlugin } from '../../../plugin/pluginAction.js'
 import { dropAction } from './dropAction.js'
 import { interfaceAction } from './interfaceAction.js'
@@ -128,15 +128,11 @@ var weipage = new Vue({
 		changeFormTab(form) {
 			this.selectForm = form
 		},
-		openPluginTreeModel(source) {
+		openPluginTreeModel(res) {
 			this.pluginTreeModel = true
-			if (source === 'event') {
+			if (res) {
 				callbackAction.selectPluginTree = (pluginId) => {
-					eventPluginTreeSelect(this, pluginId)
-				}
-			} else if (source === 'weipageScroll') {
-				callbackAction.selectPluginTree = (pluginId) => {
-					weipageScrollPluginTreeSelect(this, pluginId)
+					pluginTreeSelect(this, res, pluginId)
 				}
 			} else {
 				callbackAction.selectPluginTree = (pluginId) => {
@@ -154,7 +150,7 @@ var weipage = new Vue({
 		openInterfaceModel(source) {
 			interfaceAction.getInterfaceList()
 			this.interfaceModel = true
-			if (source === 'event') {
+			if (source) {
 				callbackAction.selectInterface = (interfaceId) => {
 					interfaceAction.eventSelectInterface(this.getSelectPlugin(), interfaceId)
 				}

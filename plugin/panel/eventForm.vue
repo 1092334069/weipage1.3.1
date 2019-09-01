@@ -20,7 +20,7 @@
 				<template v-if="item.type === 'normal'">
 					<div class="form-list">
 						<span class="form-lable">元件：</span>
-						<div class="form-item" @click="openPluginTreeModel">{{item.value.name}}</div>
+						<div class="form-item" @click="openPluginTreeModel(item)">{{item.value.name}}</div>
 					</div>
 					<template v-if="item.value.options && item.value.options.length">
 						<div class="form">
@@ -158,8 +158,11 @@
 			openInterfaceModel: function() {
 				this.$emit('open-interface-model', 'event')
 			},
-			openPluginTreeModel: function() {
-				this.$emit('open-plugin-tree-model', 'event')
+			openPluginTreeModel: function(formData) {
+				this.$emit('open-plugin-tree-model', {
+					formData: formData,
+					name: 'value'
+				})
 			},
 			selectEvent: function(index) {
 				this.selectIndex = index
