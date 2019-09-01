@@ -19,7 +19,7 @@ module.exports = {
         }
       }),
       new CleanWebpackPlugin(['dist'], {
-        root: path.resolve(__dirname, '../')
+        root: path.resolve(__dirname, './')
       }),
       new HtmlWebpackPlugin({
         filename: "login.html",
