@@ -61,7 +61,11 @@
 		},
 		methods: {
 			openInterfaceModel: function() {
-				this.$emit('open-interface-model','weipage')
+				this.$emit('open-interface-model', {
+					formData: this.formData,
+					name: 'interfaceList',
+					isArray: true
+				})
 			},
 			selectImage: function(res) {
 				this.$emit('select-image', res)

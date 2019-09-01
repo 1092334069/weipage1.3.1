@@ -29,7 +29,7 @@
 				<template v-else>
 					<div class="form-list">
 						<span class="form-lable">接口：</span>
-						<div class="form-item" @click="openInterfaceModel">{{item.value.name}}</div>
+						<div class="form-item" @click="openInterfaceModel(item)">{{item.value.name}}</div>
 					</div>
 					<template v-if="item.value.param && item.value.param.length">
 						<div class="form size-l" v-for="inf in item.value.param">
@@ -166,8 +166,11 @@
 					name: 'value'
 				})
 			},
-			openInterfaceModel: function() {
-				this.$emit('open-interface-model', 'weipageScroll')
+			openInterfaceModel: function(formData) {
+				this.$emit('open-interface-model', {
+					formData: formData,
+					name: 'value'
+				})
 			},
 			openInteraceTreeModel: function(formData) {
 				this.$emit('open-interface-tree-model', {

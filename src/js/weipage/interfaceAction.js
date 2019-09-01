@@ -72,31 +72,40 @@ class InterfaceAction {
 			_this.weiPageThis.interfaceTree.push(interfaceDetail)
 		})
 	}
-	weipageSelectInterface(interfaceId) {
-		const _this = this
+	addInterface(option, interfaceId) {
 		this.selectInterface(interfaceId, function(interfaceDetail) {
-			_this.weiPageThis.weipage.interfaceList.push(interfaceDetail)
-			_this.weiPageThis.weipage.selectInterfaceId = interfaceDetail.interfaceId
-		})
-	}
-	weipageScrollSelectInterface(interfaceId) {
-		const _this = this
-		this.selectInterface(interfaceId, function(interfaceDetail) {
-			_this.weiPageThis.weipage.scrollEvent.eventList[_this.weiPageThis.weipage.scrollEvent.selectIndex].value = JSON.parse(JSON.stringify(interfaceDetail))
-		})
-	}
-	eventSelectInterface(plugin, interfaceId) {
-		const _this = this
-		this.selectInterface(interfaceId, function(interfaceDetail) {
-			let event
-			if (plugin) {
-				event = plugin.event
-			}
-			if (event) {
-				event.eventList[event.selectIndex].value = JSON.parse(JSON.stringify(interfaceDetail))
+			if (option.isArray) {
+				option.formData[option.name].push(interfaceDetail)
+			} else {
+				option.formData[option.name] = interfaceDetail
 			}
 		})
 	}
+	// weipageSelectInterface(interfaceId) {
+	// 	const _this = this
+	// 	this.selectInterface(interfaceId, function(interfaceDetail) {
+	// 		_this.weiPageThis.weipage.interfaceList.push(interfaceDetail)
+	// 		_this.weiPageThis.weipage.selectInterfaceId = interfaceDetail.interfaceId
+	// 	})
+	// }
+	// weipageScrollSelectInterface(interfaceId) {
+	// 	const _this = this
+	// 	this.selectInterface(interfaceId, function(interfaceDetail) {
+	// 		_this.weiPageThis.weipage.scrollEvent.eventList[_this.weiPageThis.weipage.scrollEvent.selectIndex].value = JSON.parse(JSON.stringify(interfaceDetail))
+	// 	})
+	// }
+	// eventSelectInterface(plugin, interfaceId) {
+	// 	const _this = this
+	// 	this.selectInterface(interfaceId, function(interfaceDetail) {
+	// 		let event
+	// 		if (plugin) {
+	// 			event = plugin.event
+	// 		}
+	// 		if (event) {
+	// 			event.eventList[event.selectIndex].value = JSON.parse(JSON.stringify(interfaceDetail))
+	// 		}
+	// 	})
+	// }
 	deleteInterface(interfaceId) {
 		let interfaceList = this.weiPageThis.weipage.interfaceList
 		for (let i = interfaceList.length - 1; i >= 0; i--) {
