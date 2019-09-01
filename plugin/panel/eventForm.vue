@@ -157,7 +157,7 @@
 			},
 			openInterfaceModel: function(formData) {
 				this.$emit('open-interface-model', {
-					formData: formData,
+					formData,
 					name: 'value'
 				})
 			},

@@ -81,31 +81,6 @@ class InterfaceAction {
 			}
 		})
 	}
-	// weipageSelectInterface(interfaceId) {
-	// 	const _this = this
-	// 	this.selectInterface(interfaceId, function(interfaceDetail) {
-	// 		_this.weiPageThis.weipage.interfaceList.push(interfaceDetail)
-	// 		_this.weiPageThis.weipage.selectInterfaceId = interfaceDetail.interfaceId
-	// 	})
-	// }
-	// weipageScrollSelectInterface(interfaceId) {
-	// 	const _this = this
-	// 	this.selectInterface(interfaceId, function(interfaceDetail) {
-	// 		_this.weiPageThis.weipage.scrollEvent.eventList[_this.weiPageThis.weipage.scrollEvent.selectIndex].value = JSON.parse(JSON.stringify(interfaceDetail))
-	// 	})
-	// }
-	// eventSelectInterface(plugin, interfaceId) {
-	// 	const _this = this
-	// 	this.selectInterface(interfaceId, function(interfaceDetail) {
-	// 		let event
-	// 		if (plugin) {
-	// 			event = plugin.event
-	// 		}
-	// 		if (event) {
-	// 			event.eventList[event.selectIndex].value = JSON.parse(JSON.stringify(interfaceDetail))
-	// 		}
-	// 	})
-	// }
 	deleteInterface(interfaceId) {
 		let interfaceList = this.weiPageThis.weipage.interfaceList
 		for (let i = interfaceList.length - 1; i >= 0; i--) {
@@ -118,11 +93,6 @@ class InterfaceAction {
 			if (interfaceTree[i].interfaceId === interfaceId) {
 				interfaceTree.splice(i, 1)
 			}
-		}
-		if (interfaceList.length) {
-			this.weiPageThis.weipage.selectInterfaceId = interfaceList[0].interfaceId
-		} else {
-			this.weiPageThis.weipage.selectInterfaceId = 0
 		}
 	}
 	selectInterfaceParam(option) {
