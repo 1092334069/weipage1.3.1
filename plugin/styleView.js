@@ -87,8 +87,10 @@ const styleView = {
 	parsePosition: function() {
 		if (this.viewData.style.position === 'relative') {
 			return 'position:relative'
+		} else if (this.viewData.style.position === 'absolute') {
+			return 'z-index:10;position:absolute;top:' + this.viewData.style.top + 'px;left:' + this.viewData.style.left + 'px'
 		} else {
-			return 'position:absolute;top:' + this.viewData.style.top + 'px;left:' + this.viewData.style.left + 'px'
+			return 'z-index:20;position:fixed;top:' + (parseFloat(this.viewData.style.top) + 75) + 'px;left:' + (parseFloat(this.viewData.style.left) + 100) + 'px'
 		}
 	}
  }

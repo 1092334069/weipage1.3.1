@@ -2,7 +2,7 @@
 	<div>
 		<div class="form-group" @click="triggerForm('shape')">
 			<span>形状</span>
-			<span class="form-trigger" :class="{close:formValid.shape}"></span>
+			<span class="form-trigger" :class="{ close: formValid.shape }"></span>
 		</div>
 		<div v-if="formValid.shape">
 			<div class="form">
@@ -29,13 +29,13 @@
 		</div>
 		<div class="form-group" @click="triggerForm('border')">
 			<span>边框</span>
-			<span class="form-trigger" :class="{close:formValid.border}"></span>
+			<span class="form-trigger" :class="{ close: formValid.border }"></span>
 		</div>
 		<div v-if="formValid.border">
 			<div class="form">
 				<v-radio lable="边框状态" :options="borderDisplayOptions" :formData="formData" name="border"></v-radio>
 			</div>
-			<div v-if="formData.border==='block'">
+			<template v-if="formData.border==='block'">
 				<div class="form">
 					<v-radio lable="边框风格" :options="borderStyleOptions" :formData="formData" name="borderStyle"></v-radio>
 				</div>
@@ -45,7 +45,7 @@
 				<div class="form">
 					<v-color lable="边框颜色" :formData="formData" name="borderColor"></v-color>
 				</div>
-			</div>
+			</template>
 		</div>
 		<div class="form-group" @click="triggerForm('location')">
 			<span>定位</span>
@@ -53,18 +53,20 @@
 		</div>
 		<div v-if="formValid.location">
 			<div class="form">
-				<v-radio lable="是否定位" :options="locationPositionOptions" :formData="formData" name="position"></v-radio>
+				<v-radio lable="定位" :options="locationPositionOptions" :formData="formData" name="position"></v-radio>
 			</div>
-			<div class="form" v-if="formData.position==='absolute'">
-				<v-number lable="横向" :formData="formData" name="left"></v-number>
-			</div>
-			<div class="form" v-if="formData.position==='absolute'">
-				<v-number lable="纵向" :formData="formData" name="top"></v-number>
-			</div>
+			<template v-if="formData.position!=='relative'">
+				<div class="form">
+					<v-number lable="横向" :formData="formData" name="left"></v-number>
+				</div>
+				<div class="form">
+					<v-number lable="纵向" :formData="formData" name="top"></v-number>
+				</div>
+			</template>
 		</div>
 		<div class="form-group" @click="triggerForm('fill')">
 			<span>填充</span>
-			<span class="form-trigger" :class="{close:formValid.fill}"></span>
+			<span class="form-trigger" :class="{ close: formValid.fill }"></span>
 		</div>
 		<div v-if="formValid.fill">
 			<div class="form">
@@ -76,7 +78,7 @@
 		</div>
 		<div class="form-group" @click="triggerForm('text')">
 			<span>字体</span>
-			<span class="form-trigger" :class="{close:formValid.text}"></span>
+			<span class="form-trigger" :class="{ close: formValid.text }"></span>
 		</div>
 		<div v-if="formValid.text">
 			<div class="form">
@@ -148,11 +150,14 @@
 					value: 'dotted'
 				}],
 				locationPositionOptions: [{
-					label: '否',
+					label: '无',
 					value: 'relative'
 				},{
-					label: '是',
+					label: '相对',
 					value: 'absolute'
+				},{
+					label: '固定',
+					value: 'fixed'
 				}],
 				textAlignOptions:[{
 					label: '左',

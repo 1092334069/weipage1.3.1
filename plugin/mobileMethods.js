@@ -85,8 +85,10 @@ const styleView = {
 	parsePosition: function() {
 		if (this.getViewStyleData('position') === 'relative') {
 			return 'position:relative'
+		} else if (this.getViewStyleData('position') === 'absolute') {
+			return 'z-index:10;position:absolute;top:' + this.getViewStyleData('top') + ';left:' + this.getViewStyleData('left')
 		} else {
-			return 'position:absolute;top:' + this.getViewStyleData('top') + ';left:' + this.getViewStyleData('left')
+			return 'z-index:20;position:fixed;top:' + this.getViewStyleData('top') + ';left:' + this.getViewStyleData('left')
 		}
 	},
 	parseViewDataIndexList: function(index) {
