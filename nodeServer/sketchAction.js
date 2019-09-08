@@ -19,17 +19,14 @@ function getLayerDir(folderName, fileName, callback) {
 					for (let i = 0; i < data.pageData[key].artboardId.length; i++) {
 						const artboardId = data.pageData[key].artboardId[i]
 						if (data.artboard[artboardId]) {
-							pageList.push({
-								id: artboardId,
-								name: decodeURIComponent(data.artboard[artboardId].name)
+							dirList.push({
+								dirId: key,
+								dirName: decodeURIComponent(data.pageData[key].name),
+								pageId: artboardId,
+								pageName: decodeURIComponent(data.artboard[artboardId].name)
 							})
 						}
 					}
-					dirList.push({
-						id: key,
-						name: decodeURIComponent(data.pageData[key].name),
-						pageList
-					})
 				}
 				callback(JSON.stringify({
 					code: 200,

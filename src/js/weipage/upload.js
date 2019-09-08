@@ -1,35 +1,67 @@
 import 'babel-polyfill'
 import '../../css/reset.css'
 
-$('#btn').click(function() {
-	const file = $('#file')
-	const formData = new FormData()
-	formData.append('file', file[0].files[0])
-
-	$.ajax({
-		url: '/api/file/sketchUpload',
-		type: 'post',
-		data: formData,
-		contentType: false,
-        processData: false,
-		dataType: 'json',
-		success: function(res) {
-			console.log(res)
+new Vue({
+	el: '#uploadList',
+	data() {
+		return {
+			folderName: '',
+			fileName: '',
+			fileList: [],
+			uploadTable: [
+				{ title: '分类', key: 'dirName' },
+				{ title: '页面名称', key: 'pageName' },
+				{ title: '操作', key: 'action', render: (h, params) => {
+					return h('div',[
+						h('Button', {
+							on: {
+								click: () => {
+									this.sketchToWeipage(params.row.dirId, params.row.pageId)
+								}
+							}
+						}, '生成')
+					])
+				}}
+			]
 		}
-	})
-})
-
-$.ajax({
-	url: '/api/file/sketchToWeipage',
-	type: 'get',
-	data: {
-		folderName: '0e38bc264f47dcec9edd6b21bb95d8f6_20190908181237',
-		fileName: '2',
-		dirId: '57B1B839-4E03-428A-883C-ADB6F0FE43F3',
-		pageId: '787F49B2-8194-49D5-8E59-ECB84FE4E7DB'
 	},
-	dataType: 'json',
-	success: function(res) {
-		console.log(res)
+	methods: {
+		sketchToWeipage: function(dirId, pageId) {
+			$.ajax({
+				url: '/api/file/sketchToWeipage',
+				type: 'get',
+				data: {
+					folderName: this.folderName,
+					fileName: this.fileName,
+					dirId,
+					pageId
+				},
+				dataType: 'json',
+				success: function(res) {
+					console.log(res)
+				}
+			})
+		},
+		upload: function() {
+			const _this = this
+			const file = $('#file')
+			const formData = new FormData()
+			formData.append('file', file[0].files[0])
+			$.ajax({
+				url: '/api/file/sketchUpload',
+				type: 'post',
+				data: formData,
+				contentType: false,
+		        processData: false,
+				dataType: 'json',
+				success: function(res) {
+					if (res && res.code === 200 && res.data) {
+						_this.fileList = res.data.dirList
+						_this.folderName = res.data.folderName
+						_this.fileName = res.data.fileName
+					}
+				}
+			})
+		}
 	}
 })
