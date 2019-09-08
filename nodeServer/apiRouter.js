@@ -57,6 +57,12 @@ const apiRouter = [{
 },{
 	pathname: '/api/local/getLocalKey',
 	action: apiAction.localInfo.getLocalKey
+},{
+	pathname: '/api/file/sketchUpload',
+	action: apiAction.fileInfo.sketchUpload
+},{
+	pathname: '/api/file/sketchToWeipage',
+	action: apiAction.fileInfo.sketchToWeipage
 }]
 
 module.exports = apiRouter

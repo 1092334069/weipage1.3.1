@@ -1,5 +1,7 @@
 const aesUtil = require('./aesUtil')
 const apiServer = require('./apiServer')
+const fileAction = require('./fileAction')
+const sketchAction = require('./sketchAction')
 
 const imageInfo = {
 	insert: function(parameter, callback) {
@@ -99,6 +101,36 @@ const localInfo = {
 	}
 }
 
+const fileInfo = {
+	sketchUpload: function(parameter, callback) {
+		if (parameter.param.userIdStr) {
+			fileAction.sketchUpload(parameter.req, parameter.param.userIdStr, callback)
+		} else {
+			callback(JSON.stringify({
+				code: 700,
+				message: '未登录'
+			}))
+		}
+	},
+	sketchToWeipage: function(parameter, callback) {
+		if (parameter.param.userIdStr) {
+			if (parameter.param.folderName && parameter.param.fileName && parameter.param.dirId && parameter.param.pageId) {
+				sketchAction.sketchToWeipage(parameter.param.folderName, parameter.param.fileName, parameter.param.dirId, parameter.param.pageId, callback)
+			} else {
+				callback(JSON.stringify({
+					code: 600,
+					message: '缺少参数'
+				}))
+			}
+		} else {
+			callback(JSON.stringify({
+				code: 700,
+				message: '未登录'
+			}))
+		}
+	}
+}
+
 module.exports = {
 	imageInfo,
 	interfaceInfo,
@@ -106,5 +138,6 @@ module.exports = {
 	phoneInfo,
 	userInfo,
 	weipageInfo,
-	localInfo
+	localInfo,
+	fileInfo
 }

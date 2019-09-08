@@ -6,10 +6,11 @@ const uglify = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: {
-  	'weipage/index':'./src/js/weipage/index.js',
-    'weipage/list':'./src/js/weipage/list.js',
+  	'weipage/index': './src/js/weipage/index.js',
+    'weipage/list': './src/js/weipage/list.js',
     'weipage/view': './src/js/weipage/view.js',
-    'weipage/mobile': './src/js/weipage/mobile.js'
+    'weipage/mobile': './src/js/weipage/mobile.js',
+    'weipage/upload': './src/js/weipage/upload.js'
   },
   devtool: 'inline-source-map',
   plugins: [
@@ -61,12 +62,20 @@ module.exports = {
           collapseWhitespace: true
         }
       }),
+      new HtmlWebpackPlugin({
+        filename: "weipage/upload.html",
+        template: path.resolve(__dirname, ".", "./src/html/weipage/upload.html"),
+        chunks: ["weipage/upload"],
+        minify: {
+          collapseWhitespace: true
+        }
+      }),
       new webpack.ProvidePlugin({ $: "jquery" }),
       new uglify()
   ],
   output: {
-	    filename: '[name].bundle.js',
-	    path:__dirname + '/dist',
+    filename: '[name].bundle.js',
+    path:__dirname + '/dist',
 		publicPath: '/dist/'
   },  
   devServer: {
