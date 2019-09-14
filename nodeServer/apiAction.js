@@ -115,7 +115,23 @@ const fileInfo = {
 	sketchToWeipage: function(parameter, callback) {
 		if (parameter.param.userIdStr) {
 			if (parameter.param.folderName && parameter.param.fileName && parameter.param.dirId && parameter.param.pageId) {
-				sketchAction.sketchToWeipage(parameter.param.folderName, parameter.param.fileName, parameter.param.dirId, parameter.param.pageId, callback)
+				localInfo.getLocalKey(parameter, (r) => {
+					const res = JSON.parse(r)
+					if (res && res.localKey) {
+						const sketctData = {
+							folderName:parameter.param.folderName,
+							fileName: parameter.param.fileName,
+							dirId: parameter.param.dirId,
+							pageId: parameter.param.pageId
+						}
+						sketchAction.sketchToWeipage(sketctData,res.localKey,callback)
+					} else {
+						callback(JSON.stringify({
+							code: 601,
+							message: '密钥丢失'
+						}))
+					}
+				})
 			} else {
 				callback(JSON.stringify({
 					code: 600,

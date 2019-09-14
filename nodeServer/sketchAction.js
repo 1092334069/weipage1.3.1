@@ -1,7 +1,9 @@
 const fs = require('fs')
 const path = require("path")
 const fileConfig = require('../config/fileConfig')
+const pluginConfig = require('../plugin/pluginConfig')
 
+// 获取文件目录结构
 function getLayerDir(folderName, fileName, callback) {
 	try {
 		const fileDir = __dirname + '/' + fileConfig.sketch + '/'
@@ -46,27 +48,29 @@ function getLayerDir(folderName, fileName, callback) {
 	}
 }
 
-function sketchToWeipage(folderName, fileName, dirId, pageId, callback) {
-	const fileDir = __dirname + '/' + fileConfig.sketch + '/'
-	const fileUrl = fileDir + folderName + '/' + fileName + '/'
+// sketch转微页面
+function sketchToWeipage(sketctData, localKey, callback) {
+	const fileDir = '/' + fileConfig.sketch + '/'
+	const fileUrl = fileDir + sketctData.folderName + '/' + sketctData.fileName + '/'
 	const file = path.join(fileUrl, 'data.json')
 	try {
-		fs.readFile(file, 'utf-8', function(err, jsonData) {
+		fs.readFile(__dirname + file, 'utf-8', function(err, jsonData) {
 			if (err) {
 				callback(JSON.stringify({code: 501, message: '生成失败' }))
 				return
 			}
-			const imgFileDir = fileUrl + pageId
-			const imageFileList = readFileList(imgFileDir)
-			const layerList = parseLayerList(jsonData, dirId, pageId)
+			const imgFileDir = fileUrl + sketctData.pageId
+			const imageFileList = readFileList(__dirname + imgFileDir)
+			const layerList = parseLayerList(jsonData, sketctData.dirId, sketctData.pageId)
 			const coordinateList = parseCoordinateList(layerList)
-			const imageList = parseImageList(layerList, imageFileList)
+			const imageSource = parseImageList(layerList, imageFileList)
+			const scaleplateList = parseScaleplate(coordinateList)
+			const pluginList = createPluginList(localKey, scaleplateList, layerList, imageSource, '/nodeServer' + imgFileDir)
+
 			callback(JSON.stringify({
 				code: 200,
 				data: {
-					layerList,
-					coordinateList,
-					imageList
+					pluginList
 				},
 				message: '生成成功'
 			}))
@@ -77,6 +81,87 @@ function sketchToWeipage(folderName, fileName, dirId, pageId, callback) {
 	}
 }
 
+// 创建插件列表
+function createPluginList(localKey, scaleplateList, layerList, imageSource, imgFileDir) {
+	const pluginList = []
+	for (let i = 0; i < scaleplateList.length; i++) {
+		let height = 0
+		if (i > 0) {
+			height = scaleplateList[i] - scaleplateList[i-1]
+		} else {
+			height = scaleplateList[i]
+		}
+		const panelPlugin = createPanel(localKey, '面板', {
+			width: 375,
+			height
+		})
+		pluginList.push(panelPlugin)
+	}
+	for (let i = 0; i < layerList.length; i++) {
+		for (let j = 0; j < scaleplateList.length; j++) {
+			if ((layerList[i].place.top + layerList[i].place.height) <= scaleplateList[j]) {
+				const pluginName = layerList[i].name
+				let top = 0
+				if (j > 0) {
+					top = scaleplateList[j-1]
+				}
+				const pluginStyle = {
+					position: 'absolute',
+					top: layerList[i].place.top - top,
+					left: layerList[i].place.left,
+					width: layerList[i].place.width,
+					height: layerList[i].place.height
+				}
+				if (layerList[i].style) {
+					pluginStyle['textAlign'] = layerList[i].style['text-align'] || 'left'
+					pluginStyle['fontSize'] = parseInt(layerList[i].style['font-size']) || 12
+					pluginStyle['color'] = layerList[i].style.color || '#333333'
+					pluginStyle['lineHeight'] = parseInt(layerList[i].style['line-height']) || 18
+				}
+				if (imageSource[layerList[i].id]) {
+					pluginStyle['backgroundImage'] = imgFileDir + '/' +imageSource[layerList[i].id]
+				}
+				const panelPlugin = createPanel(localKey, pluginName, pluginStyle)
+				if (layerList[i].html) {
+					panelPlugin.pluginList.push(createText(localKey, layerList[i].html))
+				}
+				pluginList[j].pluginList.push(panelPlugin)
+				break
+			}
+		}
+	}
+	return pluginList
+}
+
+let uuIndex = 0
+
+// 获取全局唯一id
+function getLocalUuid(localKey) {
+	const timeString = Date.now()
+	uuIndex += 1
+	return 'p' + localKey + timeString + uuIndex
+}
+
+// 创建面板插件
+function createPanel(localKey, name, style) {
+	const plugin = JSON.parse(JSON.stringify(pluginConfig['panel']))
+	plugin['pluginId'] = getLocalUuid(localKey)
+	plugin.base.name = name
+	for (let key in style) {
+		plugin.style[key] = style[key]
+	}
+	return plugin
+}
+
+// 创建文本插件
+function createText(localKey, text) {
+	const plugin = JSON.parse(JSON.stringify(pluginConfig['text']))
+	plugin['pluginId'] = getLocalUuid(localKey)
+	plugin.base.data = text
+	return plugin
+}
+
+// 读取资源文件夹
 function readFileList(path) {
 	const filesList = []
 	const files = fs.readdirSync(path)
@@ -89,24 +174,50 @@ function readFileList(path) {
 	return filesList
 }
 
+// 解析图片资源
 function parseImageList(layerList, imageFileList) {
-	const imageList = []
+	const imageSource = {}
 	if (layerList && layerList.length && imageFileList && imageFileList.length) {
 		for (let i = 0; i < layerList.length; i++) {
 			for (let j = imageFileList.length - 1; j >= 0; j--) {
 				if (imageFileList[j].indexOf(layerList[i].id) >= 0) {
-					imageList.push({
-						id: layerList[i].id,
-						src: imageFileList[j]
-					})
+					imageSource[layerList[i].id] = imageFileList[j]
 					break
 				}
 			}
 		}
 	}
-	return imageList
+	return imageSource
 }
 
+// 解析标尺
+function parseScaleplate(coordinateList) {
+	const list = []
+	if (coordinateList && coordinateList.length) {
+		list.push({
+			top: coordinateList[0].top,
+			bottom: coordinateList[0].bottom
+		})
+		for (let i = 1; i < coordinateList.length; i++) {
+			const item = list[list.length - 1]
+			if (coordinateList[i].top >= item.bottom) {
+				list.push({
+					top: coordinateList[i].top,
+					bottom: coordinateList[i].bottom
+				})
+			} else if (coordinateList[i].bottom > item.bottom) {
+				item.bottom = coordinateList[i].bottom
+			}
+		}
+	}
+	const scaleplateList = []
+	for (let i = 0; i < list.length; i++) {
+		scaleplateList.push(list[i].bottom)
+	}
+	return scaleplateList
+}
+
+// 解析布局资源
 function parseLayerList(jsonData, pageId, artboardId) {
 	const data = JSON.parse(jsonData)
 	const pageOrderList = []
@@ -161,6 +272,7 @@ function parseLayerList(jsonData, pageId, artboardId) {
 	}
 }
 
+// 重构排序
 function parseCoordinateList(layerList) {
 	const coordinateList = []
 	if (layerList && layerList.length) {
@@ -177,6 +289,7 @@ function parseCoordinateList(layerList) {
 	return quickSort(coordinateList)
 }
 
+// 以下三个方法是快速排序
 function quickSort(arr, left, right) {
 	let len = arr.length,
 		partitionIndex
@@ -189,7 +302,6 @@ function quickSort(arr, left, right) {
 	}
 	return arr
 }
-
 function partition(arr, left, right) {
 	let pivot = left,
 		index = pivot + 1
@@ -205,7 +317,6 @@ function partition(arr, left, right) {
 	swap(arr, pivot, index - 1)
 	return index - 1
 }
-
 function swap(arr, i, j) {
 	let temp = arr[i]
 	arr[i] = arr[j]

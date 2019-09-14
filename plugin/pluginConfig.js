@@ -1,4 +1,4 @@
-var pluginConfig = {
+const pluginConfig = {
 	panel: {
 		pluginType: 'panel',
 		base: {
@@ -6,9 +6,7 @@ var pluginConfig = {
 			data: '',
 			type: 'normal',
 			actionList: [],
-			selectIndex: 0,
-			attrList: [],
-			attrSelectIndex: 0
+			attrList: []
 		},
 		style: {
 			width: 375,
@@ -21,7 +19,7 @@ var pluginConfig = {
 			borderWidth: 1,
 			borderStyle: 'solid',
 			borderColor: '#e5e5e5',
-			backgroundColor: '#ffffff',
+			backgroundColor: '',
 			backgroundImage: '',
 			position: 'relative',
 			top: 0,
@@ -35,8 +33,7 @@ var pluginConfig = {
 			fontStyle: 'normal'
 		},
 		event: {
-			eventList: [],
-			selectIndex: 0
+			eventList: []
 		},
 		pluginList: []
 	},
@@ -45,8 +42,7 @@ var pluginConfig = {
 		base: {
 			name: '文本',
 			data: '',
-			actionList: [],
-			selectIndex: 0
+			actionList: []
 		}
 	},
 	image: {
@@ -55,8 +51,7 @@ var pluginConfig = {
 			name: '图片',
 			data: '',
 			width: 100,
-			actionList: [],
-			selectIndex: 0
+			actionList: []
 		}
 	},
 	form: {
@@ -68,18 +63,17 @@ var pluginConfig = {
 			key: '',
 			actionList: [],
 			selectIndex: 0,
-			optionList: [],
-			optionSelectIndex: 0
+			optionList: []
 		},
 		style: {
 			width: 375,
 			height: 40,
 			fontSize: 14,
 			color: '#333333',
-			backgroundColor: '#ffffff',
+			backgroundColor: '',
 			backgroundImage: ''
 		}
 	}
 }
 
-export default pluginConfig
+module.exports = pluginConfig
