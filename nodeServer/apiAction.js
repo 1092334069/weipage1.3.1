@@ -1,3 +1,5 @@
+const fs = require('fs')
+const FormData = require('form-data')
 const aesUtil = require('./aesUtil')
 const apiServer = require('./apiServer')
 const fileAction = require('./fileAction')
@@ -5,8 +7,12 @@ const sketchAction = require('./sketchAction')
 
 const imageInfo = {
 	upload: function(parameter, callback) {
-		fileAction.fileUpload(parameter.req, (file, bufferData) => {
-			parameter.param[file] = bufferData
+		fileAction.fileUpload(parameter.req, (file, path) => {
+			let formdata = new FormData()
+			console.log(fs.createReadStream(path))
+			formdata.append('file', fs.createReadStream(path))
+			parameter.param = formdata
+			console.log(parameter.param);
 			apiServer.javaServerRequest(parameter, callback)
 		}, callback)
 	},
@@ -130,7 +136,7 @@ const fileInfo = {
 							dirId: parameter.param.dirId,
 							pageId: parameter.param.pageId
 						}
-						sketchAction.sketchToWeipage(sketctData,res.localKey,callback)
+						sketchAction.sketchToWeipage(sketctData, res.localKey, callback)
 					} else {
 						callback(JSON.stringify({
 							code: 601,

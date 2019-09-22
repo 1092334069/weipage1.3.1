@@ -10,7 +10,7 @@ function httpGet(hostname, port, parameter, callback) {
 		method: 'GET',
 		headers: {
 			'Content-Type':parameter.req.headers['content-type'] || 'application/x-www-form-urlencoded; charset=UTF-8', 
-			'User-Agent': parameter.headers['user-agent']
+			'User-Agent': parameter.req.headers['user-agent']
 		}
 	}
 	let rqt = http.request(options, (res) => {
@@ -29,8 +29,15 @@ function httpGet(hostname, port, parameter, callback) {
 	rqt.end()
 }
 
-function httpPost(hostname, port, parameter, callback){ 
+function httpPost(hostname, port, parameter, callback){
 	let postData = querystring.stringify(parameter.param)
+	// if (parameter.req.headers['content-type'].indexOf('application/json') >= 0) {
+	// 	postData = parameter.param
+	// } else if (parameter.req.headers['content-type'].indexOf('multipart/form-data') >= 0) {
+	// 	postData = parameter.param
+	// }  else {
+	// 	postData = querystring.stringify(parameter.param)
+	// }
 	let options = {
 		hostname,
 		port,
@@ -38,24 +45,29 @@ function httpPost(hostname, port, parameter, callback){
 		method: 'POST',
 		headers: {
 			'Content-Type':parameter.req.headers['content-type'] || 'application/x-www-form-urlencoded; charset=UTF-8',
-			'User-Agent': parameter.headers['user-agent']
+			'User-Agent': parameter.req.headers['user-agent']
 		}
-	}  
+	}
 	let rqt = http.request(options, (res) => {
 	let backData = ''
 		res.setEncoding('utf-8')
 		res.on('data', (chun) => {
 			backData += chun
 		})
-		res.on('end', (end) => {        
+		res.on('end', (end) => {
 			callback(backData)
 		})
 	})
-	rqt.on('error', (err) => {  
+	rqt.on('error', (err) => {
+		console.log(err)
 		callback({code: 502, message: '网络异常，请稍后重试' })
 	})
-	rqt.write(postData)
-	rqt.end()
+	if (parameter.req.headers['content-type'].indexOf('multipart/form-data') >= 0) {
+		postData.pipe(rqt)
+	} else {
+		rqt.write(postData)
+		rqt.end()
+	}
 }
 
 function serverRequest(parameter, callback) {

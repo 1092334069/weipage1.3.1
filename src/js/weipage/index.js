@@ -57,14 +57,11 @@ var weipage = new Vue({
 				pageName: '',
 				backgroundColor: '',
 				interfaceList: [],
-				selectInterfaceId: 0,
 				scrollEvent: {
-					eventList: [],
-					selectIndex: 0
+					eventList: []
 				},
 				countEvent: {
-					eventList: [],
-					selectIndex: 0
+					eventList: []
 				}
 			},
 

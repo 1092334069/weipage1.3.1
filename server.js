@@ -9,7 +9,8 @@ const httpUtil = require('./nodeServer/httpUtil')
 
 const app = express()
 
-app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json({limit: '5mb'}))
+app.use(bodyParser.urlencoded({limit: '5mb', extended: true}))
 app.use(cookieParser())
 
 var server = app.listen(8090, '0.0.0.0', function() {})

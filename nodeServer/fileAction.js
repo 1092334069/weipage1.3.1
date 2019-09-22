@@ -67,13 +67,14 @@ function fileUpload(req, callback, errCallback) {
 		}
 		for(let file in files) {
 			for (let idx = 0; idx < files[file].length; idx++) {
-				fs.readFile(files[file][idx].path, (err, bufferData) => {
-					if (err) {
-						errCallback()
-					} else {
-						callback(file, bufferData)
-					}
-				})
+				// fs.readFile(files[file][idx].path, (err, bufferData) => {
+				// 	if (err) {
+				// 		errCallback()
+				// 	} else {
+				// 		callback(file, bufferData)
+				// 	}
+				// })
+				callback(file, files[file][idx].path)
 			}
 		}
 	})
