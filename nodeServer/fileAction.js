@@ -2,10 +2,12 @@ const fs = require('fs')
 const formidable = require('formidable')
 const path = require("path")
 const sd = require("silly-datetime")
+const multiparty = require('multiparty')
 const compressing = require('compressing')
 const fileConfig = require('../config/fileConfig')
 const sketchAction = require('./sketchAction')
 
+// sketch上传处理
 function sketchUpload(req, userIdStr, callback) {
 	try {
 		const form = new formidable.IncomingForm()
@@ -56,7 +58,29 @@ function sketchUpload(req, userIdStr, callback) {
 	}
 }
 
+function fileUpload(req, callback, errCallback) {
+	var form = new multiparty.Form()
+	form.parse(req, function (err, fields, files) {
+		if (!files) {
+			errCallback()
+			return
+		}
+		for(let file in files) {
+			for (let idx = 0; idx < files[file].length; idx++) {
+				fs.readFile(files[file][idx].path, (err, bufferData) => {
+					if (err) {
+						errCallback()
+					} else {
+						callback(file, bufferData)
+					}
+				})
+			}
+		}
+	})
+}
+
 
 module.exports = {
-	sketchUpload
+	sketchUpload,
+	fileUpload
 }

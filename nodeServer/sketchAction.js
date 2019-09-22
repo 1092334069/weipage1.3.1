@@ -1,7 +1,9 @@
 const fs = require('fs')
 const path = require("path")
 const fileConfig = require('../config/fileConfig')
-const pluginConfig = require('../plugin/pluginConfig')
+const pluginAction = require('./pluginAction')
+const quickSortAction = require('./quickSortAction')
+const imageCropAction = require('./imageCropAction')
 
 // 获取文件目录结构
 function getLayerDir(folderName, fileName, callback) {
@@ -65,100 +67,22 @@ function sketchToWeipage(sketctData, localKey, callback) {
 			const coordinateList = parseCoordinateList(layerList)
 			const imageSource = parseImageList(layerList, imageFileList)
 			const scaleplateList = parseScaleplate(coordinateList)
-			const pluginList = createPluginList(localKey, scaleplateList, layerList, imageSource, '/nodeServer' + imgFileDir)
 
-			callback(JSON.stringify({
-				code: 200,
-				data: {
-					pluginList
-				},
-				message: '生成成功'
-			}))
+			imageCropAction.artboardCrop(imgFileDir, scaleplateList, () => {
+				const pluginList = pluginAction.createPluginList(localKey, scaleplateList, layerList, imageSource, '/nodeServer' + imgFileDir)
+				callback(JSON.stringify({
+					code: 200,
+					data: {
+						pluginList
+					},
+					message: '生成成功'
+				}))
+			}, callback)
 
 		})
 	} catch (err) {
 		callback(JSON.stringify({code: 500, message: '生成失败' }))
 	}
-}
-
-// 创建插件列表
-function createPluginList(localKey, scaleplateList, layerList, imageSource, imgFileDir) {
-	const pluginList = []
-	for (let i = 0; i < scaleplateList.length; i++) {
-		let height = 0
-		if (i > 0) {
-			height = scaleplateList[i] - scaleplateList[i-1]
-		} else {
-			height = scaleplateList[i]
-		}
-		const panelPlugin = createPanel(localKey, '面板', {
-			width: 375,
-			height
-		})
-		pluginList.push(panelPlugin)
-	}
-	for (let i = 0; i < layerList.length; i++) {
-		for (let j = 0; j < scaleplateList.length; j++) {
-			if ((layerList[i].place.top + layerList[i].place.height) <= scaleplateList[j]) {
-				const pluginName = layerList[i].name
-				let top = 0
-				if (j > 0) {
-					top = scaleplateList[j-1]
-				}
-				const pluginStyle = {
-					position: 'absolute',
-					top: layerList[i].place.top - top,
-					left: layerList[i].place.left,
-					width: layerList[i].place.width,
-					height: layerList[i].place.height
-				}
-				if (layerList[i].style) {
-					pluginStyle['textAlign'] = layerList[i].style['text-align'] || 'left'
-					pluginStyle['fontSize'] = parseInt(layerList[i].style['font-size']) || 12
-					pluginStyle['color'] = layerList[i].style.color || '#333333'
-					pluginStyle['lineHeight'] = parseInt(layerList[i].style['line-height']) || 18
-				}
-				if (imageSource[layerList[i].id]) {
-					pluginStyle['backgroundImage'] = imgFileDir + '/' +imageSource[layerList[i].id]
-				}
-				const panelPlugin = createPanel(localKey, pluginName, pluginStyle)
-				if (layerList[i].html) {
-					panelPlugin.pluginList.push(createText(localKey, layerList[i].html))
-				}
-				pluginList[j].pluginList.push(panelPlugin)
-				break
-			}
-		}
-	}
-	return pluginList
-}
-
-let uuIndex = 0
-
-// 获取全局唯一id
-function getLocalUuid(localKey) {
-	const timeString = Date.now()
-	uuIndex += 1
-	return 'p' + localKey + timeString + uuIndex
-}
-
-// 创建面板插件
-function createPanel(localKey, name, style) {
-	const plugin = JSON.parse(JSON.stringify(pluginConfig['panel']))
-	plugin['pluginId'] = getLocalUuid(localKey)
-	plugin.base.name = name
-	for (let key in style) {
-		plugin.style[key] = style[key]
-	}
-	return plugin
-}
-
-// 创建文本插件
-function createText(localKey, text) {
-	const plugin = JSON.parse(JSON.stringify(pluginConfig['text']))
-	plugin['pluginId'] = getLocalUuid(localKey)
-	plugin.base.data = text
-	return plugin
 }
 
 // 读取资源文件夹
@@ -286,41 +210,7 @@ function parseCoordinateList(layerList) {
 			})
 		}
 	}
-	return quickSort(coordinateList)
-}
-
-// 以下三个方法是快速排序
-function quickSort(arr, left, right) {
-	let len = arr.length,
-		partitionIndex
-		left = typeof left != 'number' ? 0 : left,
-		right = typeof right != 'number' ? len - 1 : right
-	if (left < right) {
-		partitionIndex = partition(arr, left, right)
-		quickSort(arr, left, partitionIndex - 1)
-		quickSort(arr, partitionIndex + 1, right)
-	}
-	return arr
-}
-function partition(arr, left, right) {
-	let pivot = left,
-		index = pivot + 1
-	for (let i = index; i <= right; i++) {
-		if (arr[i].top < arr[pivot].top) {
-			swap(arr, i, index)
-			index ++
-		} else if (arr[i].top === arr[pivot].top && arr[i].left < arr[pivot].left) {
-			swap(arr, i, index)
-			index ++
-		}
-	}
-	swap(arr, pivot, index - 1)
-	return index - 1
-}
-function swap(arr, i, j) {
-	let temp = arr[i]
-	arr[i] = arr[j]
-	arr[j] = temp
+	return quickSortAction.quickSort(coordinateList)
 }
 
 module.exports = {

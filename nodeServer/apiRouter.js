@@ -1,6 +1,9 @@
 const apiAction = require('./apiAction')
 
 const apiRouter = [{
+	pathname: '/api/common/upload',
+	action: apiAction.imageInfo.upload
+},{
 	pathname: '/api/image/insert',
 	action: apiAction.imageInfo.insert
 },{

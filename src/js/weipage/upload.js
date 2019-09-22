@@ -1,7 +1,7 @@
 import 'babel-polyfill'
 import '../../css/reset.css'
 
-new Vue({
+var pageVue = new Vue({
 	el: '#uploadList',
 	data() {
 		return {
@@ -43,25 +43,32 @@ new Vue({
 			})
 		},
 		upload: function() {
-			const _this = this
-			const file = $('#file')
-			const formData = new FormData()
-			formData.append('file', file[0].files[0])
-			$.ajax({
-				url: '/api/file/sketchUpload',
-				type: 'post',
-				data: formData,
-				contentType: false,
-		        processData: false,
-				dataType: 'json',
-				success: function(res) {
-					if (res && res.code === 200 && res.data) {
-						_this.fileList = res.data.dirList
-						_this.folderName = res.data.folderName
-						_this.fileName = res.data.fileName
-					}
-				}
-			})
+			$('#file').click()
 		}
 	}
+})
+
+$('#file').on('change', () => {
+	const file = $('#file')
+	const formData = new FormData()
+	formData.append('file', file[0].files[0])
+	$.ajax({
+		url: '/api/file/sketchUpload',
+		type: 'post',
+		data: formData,
+		contentType: false,
+		processData: false,
+		dataType: 'json',
+		success: (res) => {
+			if (res && res.code === 200 && res.data) {
+				pageVue.fileList = res.data.dirList
+				pageVue.folderName = res.data.folderName
+				pageVue.fileName = res.data.fileName
+			}
+			$('#file').val('')
+		},
+		error: () => {
+			$('#file').val('')
+		}
+	})
 })

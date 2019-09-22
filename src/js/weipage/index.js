@@ -212,6 +212,9 @@ var weipage = new Vue({
 			callbackAction.selectImage(url)
 			this.closeImageModel()
 		},
+		uploadImage() {
+			$('#file').click()
+		},
 		saveWeipage() {
 			this.selectPlugin('')
 			const weipageName = this.weipage.name
@@ -321,3 +324,24 @@ if (weipageId) {
 	})
 }
 
+// 图片上传
+$('#file').on('change', () => {
+	const file = $('#file')
+	const formData = new FormData()
+	formData.append('file', file[0].files[0])
+	$.ajax({
+		url: '/api/common/upload',
+		type: 'post',
+		data: formData,
+		contentType: false,
+		processData: false,
+		dataType: 'json',
+		success: function(res) {
+			console.log(res)
+			$('#file').val('')
+		},
+		error: function() {
+			$('#file').val('')
+		}
+	})
+})

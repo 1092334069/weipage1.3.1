@@ -1,4 +1,4 @@
-const statusReg = /\.(js|css|png|jpg|gif|woff|woff2|ttf|map)$/
+const statusReg = /\.(js|css|png|jpg|gif|woff|woff2|ttf|map|ico)$/
 const apiReg = /^\/api/
 
 function parsePathName(req) {

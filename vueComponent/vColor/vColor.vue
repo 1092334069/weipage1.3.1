@@ -1,7 +1,7 @@
 <template>
 	<div class="vInput" :style="{paddingLeft:lableWidth}">
 		<span v-if="lable" class="lable" :style="{width:lableWidth}">{{lable}}：</span>
-		<input type="color" v-model="model" />
+		<color-picker v-model="model"></color-picker>
 	</div>
 </template>
 

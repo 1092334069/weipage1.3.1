@@ -4,6 +4,12 @@ const fileAction = require('./fileAction')
 const sketchAction = require('./sketchAction')
 
 const imageInfo = {
+	upload: function(parameter, callback) {
+		fileAction.fileUpload(parameter.req, (file, bufferData) => {
+			parameter.param[file] = bufferData
+			apiServer.javaServerRequest(parameter, callback)
+		}, callback)
+	},
 	insert: function(parameter, callback) {
 		apiServer.serverRequest(parameter, callback)
 	},
