@@ -1,6 +1,8 @@
 <template>
 	<div class="text plugin" :class="{current: selectPluginId === viewData.pluginId}" :data-id="viewData.pluginId">
-		<span v-if="viewData.base.data">{{viewData.base.data}}</span>
+		<template v-if="viewData.base.data" v-for="item in parseTextHtml(viewData.base.data)">
+			<span>{{item}}</span><br />
+		</template>
 		<span v-else>{{viewData.base.name}}</span>
 		<Icon size="12" class="drop-icon" type="md-move" />
 	</div>

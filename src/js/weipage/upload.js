@@ -27,6 +27,10 @@ var pageVue = new Vue({
 	},
 	methods: {
 		sketchToWeipage: function(dirId, pageId) {
+			const loadingMsg = this.$Message.loading({
+				content: '正在生成，请稍等',
+				duration: 0
+			})
 			$.ajax({
 				url: '/api/file/sketchToWeipage',
 				type: 'get',
@@ -39,6 +43,10 @@ var pageVue = new Vue({
 				dataType: 'json',
 				success: function(res) {
 					console.log(res)
+					loadingMsg()
+				},
+				error: () => {
+					loadingMsg()
 				}
 			})
 		},

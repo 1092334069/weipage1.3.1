@@ -73,6 +73,7 @@ function sketchToWeipage(sketctData, localKey, callback) {
 				callback(JSON.stringify({
 					code: 200,
 					data: {
+						layerList,
 						pluginList
 					},
 					message: '生成成功'

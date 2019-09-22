@@ -1,6 +1,8 @@
 <template>
 	<div class="text plugin" :data-id="viewData.pluginId">
-		<span v-if="parseBaseData()">{{parseBaseData()}}</span>
+		<template v-if="parseBaseData()" v-for="item in parseTextHtml(parseBaseData())">
+			<span>{{item}}</span><br />
+		</template>
 	</div>
 </template>
 

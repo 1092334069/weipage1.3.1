@@ -92,6 +92,9 @@ const styleView = {
 		} else {
 			return 'z-index:20;position:fixed;top:' + (parseFloat(this.viewData.style.top) + 75) + 'px;left:' + (parseFloat(this.viewData.style.left) + 100) + 'px'
 		}
+	},
+	parseTextHtml: function(data) {
+		return data.split('↵')
 	}
  }
 

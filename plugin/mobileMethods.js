@@ -138,6 +138,9 @@ const styleView = {
 			}
 		}
 	},
+	parseTextHtml: function(data) {
+		return data.split('↵')
+	},
 	parseEventOption: function(index) {
 		const option = {
 			pluginId: this.viewData.pluginId,
