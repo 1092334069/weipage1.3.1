@@ -11,21 +11,9 @@
 		<script src="../../src/js/jquery-1.12.4.min.js"></script>
 		<script src="../../src/js/vue.js"></script>
 		<script src="../../src/js/iview.min.js"></script>
-		<style>
-			.uploadForm{
-				padding:10px;
-			}
-			#file{
-				display:none;
-			}
-		</style>
 	</head>
 	<body>
 		<div id="uploadList" v-cloak>
-			<div class="uploadForm">
-				<input id="file" type="file" />
-				<i-button type="info" @click="upload">上传</i-button>
-			</div>
 			<div class="table-list">
 				<i-table stripe :columns="uploadTable" :data="fileList"></i-table>
 			</div>

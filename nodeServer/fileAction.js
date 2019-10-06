@@ -11,7 +11,7 @@ const sketchAction = require('./sketchAction')
 function sketchUpload(req, userIdStr, callback) {
 	try {
 		const form = new formidable.IncomingForm()
-		form.uploadDir = __dirname + "/" + fileConfig.temporary
+		form.uploadDir = `${__dirname}/${fileConfig.temporary}`
 		form.parse(req, (err, fields, files) => {
 			if (err) {
 				callback(JSON.stringify({code: 501, message: '文件上传失败' }))
@@ -25,8 +25,8 @@ function sketchUpload(req, userIdStr, callback) {
 			const time = sd.format(new Date(),'YYYYMMDDHHmmss')
 			const extname = path.extname(fName)
 			const oldPath = files.file.path
-			const fileDir = __dirname + '/' + fileConfig.sketch + '/'
-			const folderName = userIdStr + '_' + time
+			const fileDir = `${__dirname}/${fileConfig.sketch}/`
+			const folderName = `${userIdStr}_${time}`
 			const fileUrl = fileDir + folderName
 			const newPath = fileUrl + extname
 			let fileName = fName.substring(0, fName.lastIndexOf('.'))
@@ -36,7 +36,7 @@ function sketchUpload(req, userIdStr, callback) {
 					return
 				}
 				compressing.zip.uncompress(newPath, fileUrl).then(() => {
-					sketchAction.getLayerDir(folderName, fileName, callback)
+					sketchAction.getLayerDir(folderName, callback)
 					fs.unlink(newPath, (err) => {
 						if (err) {
 							console.log(err)

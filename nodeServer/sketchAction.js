@@ -6,10 +6,11 @@ const quickSortAction = require('./quickSortAction')
 const imageCropAction = require('./imageCropAction')
 
 // 获取文件目录结构
-function getLayerDir(folderName, fileName, callback) {
+function getLayerDir(folderName, callback) {
 	try {
 		const fileDir = __dirname + '/' + fileConfig.sketch + '/'
-		const file = path.join(fileDir + folderName + '/' + fileName + '/', 'data.json')
+		console.log(fileDir + folderName + '/', 'data.json')
+		const file = path.join(fileDir + folderName + '/', 'data.json')
 		fs.readFile(file, 'utf-8', function(err, jsonData) {
 			if (err) {
 				callback(JSON.stringify({code: 505, message: '文件上传失败' }))
@@ -36,7 +37,6 @@ function getLayerDir(folderName, fileName, callback) {
 					code: 200,
 					data: {
 						folderName,
-						fileName,
 						dirList
 					},
 					message: '文件上传成功'
@@ -52,8 +52,7 @@ function getLayerDir(folderName, fileName, callback) {
 
 // sketch转微页面
 function sketchToWeipage(sketctData, localKey, callback) {
-	const fileDir = '/' + fileConfig.sketch + '/'
-	const fileUrl = fileDir + sketctData.folderName + '/' + sketctData.fileName + '/'
+	const fileUrl = `/${fileConfig.sketch}/${sketctData.folderName}/`
 	const file = path.join(fileUrl, 'data.json')
 	try {
 		fs.readFile(__dirname + file, 'utf-8', function(err, jsonData) {

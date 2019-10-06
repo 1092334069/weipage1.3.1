@@ -14,8 +14,10 @@
 	</head>
 	<body>
 		<div id="weipageList" v-cloak>
+			<input style="display:none" id="file" type="file" />
 			<div class="table-operate">
 				<i-button type="info" @click="insertWeipage">新增</i-button>
+				<i-button type="info" @click="sourceToWeipage">设计稿转微页面</i-button>
 			</div>
 			<div class="table-list">
 				<i-table stripe :columns="weipageTable" :data="list"></i-table>

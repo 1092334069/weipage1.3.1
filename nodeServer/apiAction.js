@@ -132,7 +132,6 @@ const fileInfo = {
 					if (res && res.localKey) {
 						const sketctData = {
 							folderName:parameter.param.folderName,
-							fileName: parameter.param.fileName,
 							dirId: parameter.param.dirId,
 							pageId: parameter.param.pageId
 						}

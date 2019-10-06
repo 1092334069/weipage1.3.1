@@ -9,7 +9,6 @@ var pageVue = new Vue({
 	data() {
 		return {
 			folderName: '',
-			fileName: '',
 			fileList: [],
 			uploadTable: [
 				{ title: '分类', key: 'dirName' },
@@ -55,7 +54,6 @@ var pageVue = new Vue({
 				type: 'get',
 				data: {
 					folderName: this.folderName,
-					fileName: this.fileName,
 					dirId,
 					pageId,
 					pageName
@@ -116,37 +114,13 @@ var pageVue = new Vue({
 					isUploading = false
 				}
 			})
-		},
-		upload: function() {
-			$('#file').click()
 		}
 	}
 })
 
-$('#file').on('change', () => {
-	const file = $('#file')
-	const formData = new FormData()
-	formData.append('file', file[0].files[0])
-	$.ajax({
-		url: '/api/file/sketchUpload',
-		type: 'post',
-		data: formData,
-		contentType: false,
-		processData: false,
-		dataType: 'json',
-		success: (res) => {
-			if (res && res.code === 200 && res.data) {
-				for (let i = 0; i < res.data.dirList.length; i++) {
-					res.data.dirList[i]['weipageId'] = ''
-				}
-				pageVue.fileList = res.data.dirList
-				pageVue.folderName = res.data.folderName
-				pageVue.fileName = res.data.fileName
-			}
-			$('#file').val('')
-		},
-		error: () => {
-			$('#file').val('')
-		}
-	})
-})
+if (sessionStorage['fileList']) {
+	pageVue.fileList = JSON.parse(sessionStorage['fileList'])
+	pageVue.folderName = sessionStorage['folderName']
+} else {
+	pageVue.$Message.error('文件已失效，请重新上传')
+}

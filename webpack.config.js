@@ -23,6 +23,14 @@ module.exports = {
         root: path.resolve(__dirname, './')
       }),
       new HtmlWebpackPlugin({
+        filename: "index.html",
+        template: path.resolve(__dirname, ".", "./src/html/index.html"),
+        chunks: [""],
+        minify: {
+          collapseWhitespace: true
+        }
+      }),
+      new HtmlWebpackPlugin({
         filename: "login.html",
         template: path.resolve(__dirname, ".", "./src/html/login.html"),
         chunks: [""],

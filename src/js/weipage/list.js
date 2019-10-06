@@ -86,13 +86,39 @@ var weipageList = new Vue({
 					this.$Message.error('删除失败，请稍后重试')
 				}
 			})
+		},
+		sourceToWeipage() {
+			$('#file').click()
 		}
 	}
 })
 
 weipageList.getWeipageList()
 
-// 进入页面登录，后面删掉代码
-// $.ajax({url:'/api/login/phoneCode',type:'get',data:{phone:13651438085,code:788329},dataType:'JSON',success:function(res){console.log(res)}})
-
-
+$('#file').on('change', () => {
+	const file = $('#file')
+	const formData = new FormData()
+	formData.append('file', file[0].files[0])
+	$.ajax({
+		url: '/api/file/sketchUpload',
+		type: 'post',
+		data: formData,
+		contentType: false,
+		processData: false,
+		dataType: 'json',
+		success: (res) => {
+			if (res && res.code === 200 && res.data) {
+				for (let i = 0; i < res.data.dirList.length; i++) {
+					res.data.dirList[i]['weipageId'] = ''
+				}
+				sessionStorage['fileList'] = JSON.stringify(res.data.dirList)
+				sessionStorage['folderName'] = res.data.folderName
+				window.open('/weipage/upload')
+			}
+			$('#file').val('')
+		},
+		error: () => {
+			$('#file').val('')
+		}
+	})
+})
