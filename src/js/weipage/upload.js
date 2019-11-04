@@ -19,10 +19,10 @@ var pageVue = new Vue({
 							h('Button', {
 								on: {
 									click: () => {
-										window.open(`/weipage/view?weipageId=${params.row.weipageId}`)
+										window.open(`/weipage/index?weipageId=${params.row.weipageId}`)
 									}
 								}
-							}, '预览')
+							}, '查看')
 						])
 					} else {
 						return h('div',[
@@ -65,7 +65,7 @@ var pageVue = new Vue({
 							name: pageName,
 							describes: '',
 							cover: 'http://hbimg.b0.upaiyun.com/2e5bbdfd2c380c468fe9b05f985b890b35cf74d519a98-WPlKO2_fw236',
-							pageName: this.fileName,
+							pageName: this.folderName.substring(0,20),
 							data: {
 								weipage: {
 									name: '',

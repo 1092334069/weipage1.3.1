@@ -42,13 +42,17 @@ function cropImageList(count, fileDir, scaleplateList, lastNum, srcImg, scale, c
 	}
 	if (scaleplateList.length) {
 		const item = scaleplateList.splice(0, 1)
-		const destImg = __dirname + fileDir + '/artboard/' + item[0] + '.png'
+		const destImg = `${__dirname}${fileDir}/artboard/${item[0]}.png`
 		const height = (item[0] - lastNum) * scale
 		const top = lastNum * scale
 		const width = 375 * scale
-		cropImg(srcImg, destImg, width, height, 0, top, (src) => {
-			count += 1
-			cropImageList(count, fileDir, scaleplateList, item[0], srcImg, scale, callback, errorCallback)
+		cropImg(srcImg, destImg, width, height, 0, top, (r) => {
+			if (r) {
+				count += 1
+				cropImageList(count, fileDir, scaleplateList, item[0], srcImg, scale, callback, errorCallback)
+			} else {
+				callback()
+			}
 		}, errorCallback)
 	} else {
 		callback()
@@ -59,10 +63,9 @@ function cropImageList(count, fileDir, scaleplateList, lastNum, srcImg, scale, c
 function cropImg(srcImg, destImg, width, height, x, y , callback, errorCallback) {
 	gm(srcImg).crop(width, height, x, y).write(destImg, function (err) {
 		if (err) {
-			console.log(err)
-			errorCallback()
+			callback(false)
 		} else {
-			callback(destImg)
+			callback(true)
 		}
 	})
 }

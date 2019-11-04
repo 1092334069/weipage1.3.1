@@ -44,6 +44,7 @@ function createPluginList(localKey, scaleplateList, layerList, imageSource, imgF
 				}
 				const panelPlugin = createPanel(localKey, pluginName, pluginStyle)
 				if (layerList[i].html) {
+					panelPlugin.style['display'] = 'none'
 					panelPlugin.pluginList.push(createText(localKey, layerList[i].html))
 				}
 				pluginList[j].pluginList.push(panelPlugin)

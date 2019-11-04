@@ -72,7 +72,9 @@ function sketchToWeipage(sketctData, localKey, callback) {
 				callback(JSON.stringify({
 					code: 200,
 					data: {
-						pluginList
+						pluginList,
+						layerList,
+						coordinateList
 					},
 					message: '生成成功'
 				}))
@@ -155,30 +157,30 @@ function parseLayerList(jsonData, pageId, artboardId) {
 				for (let j = 0; j < pageOrderItem.artboardId.length; j++) {
 					const artboardItem = data.artboard[pageOrderItem.artboardId[j]]
 					if (artboardItem && artboardItem.id === artboardId) {
-						const percentage = artboardItem.width / 375
-						const artboardX = artboardItem.x
-						const artboardY = artboardItem.y
 						const artboardObj = {
 							id: artboardItem.id,
 							name: decodeURIComponent(artboardItem.name),
 							layerList: []
 						}
 						for (let k = 0; k < artboardItem.layer.length; k++) {
-							const layerItem = {
-								id: artboardItem.layer[k].id,
-								name: decodeURIComponent(artboardItem.layer[k].name),
-								style: artboardItem.layer[k].style,
-								place: {
-									left: artboardItem.layer[k].x - artboardX,
-									top: artboardItem.layer[k].y - artboardY,
-									width: artboardItem.layer[k].width / percentage,
-									height: artboardItem.layer[k].height / percentage
+							var detail = getLayerCoordinate(artboardItem.layer[k].id, data.layerList)
+							if (detail) {
+								const layerItem = {
+									id: artboardItem.layer[k].id,
+									name: decodeURIComponent(artboardItem.layer[k].name),
+									style: artboardItem.layer[k].style,
+									place: {
+										left: detail.x,
+										top: detail.y,
+										width: detail.width,
+										height: detail.height
+									}
 								}
+								if (artboardItem.layer[k].hasOwnProperty('html')) {
+									layerItem.html = decodeURIComponent(artboardItem.layer[k].html)
+								}
+								artboardObj.layerList.push(layerItem)
 							}
-							if (artboardItem.layer[k].hasOwnProperty('html')) {
-								layerItem.html = decodeURIComponent(artboardItem.layer[k].html)
-							}
-							artboardObj.layerList.push(layerItem)
 						}
 						pageOrderObj.artboardList.push(artboardObj)
 					}
@@ -192,6 +194,24 @@ function parseLayerList(jsonData, pageId, artboardId) {
 	} else {
 		return []
 	}
+}
+
+function getLayerCoordinate(layerId, layerList) {
+	for (let i = 0; i < layerList.length; i++) {
+		if (layerId === layerList[i].objectID) {
+			if (layerList[i].rect) {
+				return {
+					width: layerList[i].rect.width,
+					height: layerList[i].rect.height,
+					x: layerList[i].rect.x,
+					y: layerList[i].rect.y
+				}
+			} else {
+				return false
+			}
+		}
+	}
+	return false
 }
 
 // 重构排序

@@ -126,7 +126,7 @@ const fileInfo = {
 	},
 	sketchToWeipage: function(parameter, callback) {
 		if (parameter.param.userIdStr) {
-			if (parameter.param.folderName && parameter.param.fileName && parameter.param.dirId && parameter.param.pageId) {
+			if (parameter.param.folderName && parameter.param.dirId && parameter.param.pageId) {
 				localInfo.getLocalKey(parameter, (r) => {
 					const res = JSON.parse(r)
 					if (res && res.localKey) {

@@ -3,7 +3,7 @@ const styleView = {
 		let width,height,fontSize,color,backgroundColor,backgroundImage
 		if (this.viewData.style) {
 			if (this.viewData.style.display === 'none') {
-				return 'display:none'
+				return 'opacity:0'
 			}
 			width = 'width:' + this.viewData.style.width + ';'
 			height = 'height:' + this.viewData.style.height + ";"
