@@ -67,14 +67,33 @@ function sketchToWeipage(sketctData, localKey, callback) {
 			const imageSource = parseImageList(layerList, imageFileList)
 			const scaleplateList = parseScaleplate(coordinateList)
 
-			imageCropAction.artboardCrop(imgFileDir, scaleplateList, () => {
-				const pluginList = pluginAction.createPluginList(localKey, scaleplateList, layerList, imageSource, '/nodeServer' + imgFileDir)
+			imageCropAction.artboardCrop(imgFileDir, scaleplateList, (lastScaleplate) => {
+				let scaleplates = []
+				let coordinates = []
+				if (lastScaleplate) {
+					for (let i = 0; i < scaleplateList.length; i++) {
+						if (lastScaleplate < scaleplateList[i]) {
+							break
+						}
+						scaleplates.push(scaleplateList[i])
+					}
+					for (let i = 0; i < coordinateList.length; i++) {
+						if (lastScaleplate < coordinateList[i].bottom) {
+							break
+						}
+						coordinates.push(coordinateList[i])
+					}
+				} else {
+					scaleplates = scaleplateList
+					coordinates = coordinateList
+				}
+				const pluginList = pluginAction.createPluginList(localKey, scaleplates, layerList, imageSource, '/nodeServer' + imgFileDir)
 				callback(JSON.stringify({
 					code: 200,
 					data: {
 						pluginList,
 						layerList,
-						coordinateList
+						coordinateList: coordinates
 					},
 					message: '生成成功'
 				}))

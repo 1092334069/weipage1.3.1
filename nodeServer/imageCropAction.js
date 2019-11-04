@@ -12,14 +12,16 @@ function artboardCrop(fileDir, scaleplateList, callback, errorCallback) {
 				return
 			}
 			const scale = size.width / 375
-			cropImageList(0, fileDir, JSON.parse(JSON.stringify(scaleplateList)), 0, srcImg, scale, () => {
-				callback()
+			const maxHeight = size.height / scale
+			cropImageList(0, fileDir, JSON.parse(JSON.stringify(scaleplateList)), 0, srcImg, scale, maxHeight, (lastScaleplate) => {
+				callback(lastScaleplate)
 			}, () => {
 				errorCallback(JSON.stringify({code: 501, message: '切片失败' }))
 			})
 		})
 	})
 }
+
 
 // 创建切图文件夹
 function createArtboardDir(src, callback) {
@@ -35,7 +37,7 @@ function createArtboardDir(src, callback) {
 }
 
 // 裁剪图片列表
-function cropImageList(count, fileDir, scaleplateList, lastNum, srcImg, scale, callback, errorCallback) {
+function cropImageList(count, fileDir, scaleplateList, lastNum, srcImg, scale, maxHeight, callback, errorCallback) {
 	if (count > 10000) {
 		errorCallback()
 		return
@@ -47,11 +49,11 @@ function cropImageList(count, fileDir, scaleplateList, lastNum, srcImg, scale, c
 		const top = lastNum * scale
 		const width = 375 * scale
 		cropImg(srcImg, destImg, width, height, 0, top, (r) => {
-			if (r) {
+			if (r && item[0] <= maxHeight) {
 				count += 1
-				cropImageList(count, fileDir, scaleplateList, item[0], srcImg, scale, callback, errorCallback)
+				cropImageList(count, fileDir, scaleplateList, item[0], srcImg, scale, maxHeight, callback, errorCallback)
 			} else {
-				callback()
+				callback(item[0])
 			}
 		}, errorCallback)
 	} else {
