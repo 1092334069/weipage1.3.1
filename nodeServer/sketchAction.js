@@ -181,6 +181,11 @@ function parseLayerList(jsonData, pageId, artboardId) {
 							name: decodeURIComponent(artboardItem.name),
 							layerList: []
 						}
+						// 算出页面比例
+						let ratio = 1
+						if (artboardItem.width >= 320) {
+							ratio = parseInt(parseInt(artboardItem.width) / 375)
+						}
 						for (let k = 0; k < artboardItem.layer.length; k++) {
 							var detail = getLayerCoordinate(artboardItem.layer[k].id, data.layerList)
 							if (detail) {
@@ -189,10 +194,10 @@ function parseLayerList(jsonData, pageId, artboardId) {
 									name: decodeURIComponent(artboardItem.layer[k].name),
 									style: artboardItem.layer[k].style,
 									place: {
-										left: detail.x,
-										top: detail.y,
-										width: detail.width,
-										height: detail.height
+										left: detail.x / ratio,
+										top: detail.y / ratio,
+										width: detail.width / ratio,
+										height: detail.height / ratio
 									}
 								}
 								if (artboardItem.layer[k].hasOwnProperty('html')) {

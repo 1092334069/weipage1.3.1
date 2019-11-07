@@ -73,5 +73,6 @@ function cropImg(srcImg, destImg, width, height, x, y , callback, errorCallback)
 }
 
 module.exports = {
-	artboardCrop
+	artboardCrop,
+	cropImg
 }

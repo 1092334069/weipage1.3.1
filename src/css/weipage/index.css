@@ -58,7 +58,7 @@ body{
 	cursor:pointer;
 }
 .view-page .view-page-content .plugin.current{
-	box-shadow:1px 1px 1px #138ed4;
+	box-shadow:0 0 1px 1px #138ed4;
 	z-index:2;
 }
 .plugin.clone{
