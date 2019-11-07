@@ -13,7 +13,12 @@ function artboardCrop(fileDir, scaleplateList, callback, errorCallback) {
 			}
 			const scale = size.width / 375
 			const maxHeight = size.height / scale
-			cropImageList(0, fileDir, JSON.parse(JSON.stringify(scaleplateList)), 0, srcImg, scale, maxHeight, (lastScaleplate) => {
+			// 当坐标没到达到原图高度时，将原图高度补充进最后一个坐标
+			const scaleplateJsonList = JSON.parse(JSON.stringify(scaleplateList))
+			if (maxHeight > scaleplateJsonList[scaleplateJsonList.length - 1]) {
+				scaleplateJsonList.push(maxHeight)
+			}
+			cropImageList(0, fileDir, scaleplateJsonList, 0, srcImg, scale, maxHeight, (lastScaleplate) => {
 				callback(lastScaleplate)
 			}, () => {
 				errorCallback(JSON.stringify({code: 501, message: '切片失败' }))
@@ -48,14 +53,25 @@ function cropImageList(count, fileDir, scaleplateList, lastNum, srcImg, scale, m
 		const height = (item[0] - lastNum) * scale
 		const top = lastNum * scale
 		const width = 375 * scale
-		cropImg(srcImg, destImg, width, height, 0, top, (r) => {
-			if (r && item[0] <= maxHeight) {
-				count += 1
-				cropImageList(count, fileDir, scaleplateList, item[0], srcImg, scale, maxHeight, callback, errorCallback)
-			} else {
-				callback(item[0])
-			}
-		}, errorCallback)
+		// 当坐标系的高度超过原图高度时直接使用原图高度切最后一张
+		if (height < maxHeight) {
+			cropImg(srcImg, destImg, width, height, 0, top, (r) => {
+				if (r) {
+					count += 1
+					cropImageList(count, fileDir, scaleplateList, item[0], srcImg, scale, maxHeight, callback, errorCallback)
+				} else {
+					errorCallback()
+				}
+			}, errorCallback)
+		} else {
+			cropImg(srcImg, destImg, width, maxHeight, 0, top, (r) => {
+				if (r) {
+					callback(maxHeight)
+				} else {
+					errorCallback()
+				}
+			}, errorCallback)
+		}
 	} else {
 		callback()
 	}

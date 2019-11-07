@@ -70,15 +70,18 @@ function sketchToWeipage(sketctData, localKey, callback) {
 			imageCropAction.artboardCrop(imgFileDir, scaleplateList, (lastScaleplate) => {
 				let scaleplates = []
 				let coordinates = []
+				// 返回最后一个坐标时将原图的最后一个坐标补充进坐标系
 				if (lastScaleplate) {
 					for (let i = 0; i < scaleplateList.length; i++) {
-						if (lastScaleplate < scaleplateList[i]) {
+						if (lastScaleplate <= scaleplateList[i]) {
+							scaleplates.push(lastScaleplate)
 							break
 						}
 						scaleplates.push(scaleplateList[i])
 					}
 					for (let i = 0; i < coordinateList.length; i++) {
-						if (lastScaleplate < coordinateList[i].bottom) {
+						if (lastScaleplate <= coordinateList[i].bottom) {
+							coordinates.push(lastScaleplate)
 							break
 						}
 						coordinates.push(coordinateList[i])
@@ -194,10 +197,10 @@ function parseLayerList(jsonData, pageId, artboardId) {
 									name: decodeURIComponent(artboardItem.layer[k].name),
 									style: artboardItem.layer[k].style,
 									place: {
-										left: detail.x / ratio,
-										top: detail.y / ratio,
-										width: detail.width / ratio,
-										height: detail.height / ratio
+										left: parseInt(detail.x / ratio),
+										top: parseInt(detail.y / ratio),
+										width: parseInt(detail.width / ratio),
+										height: parseInt(detail.height / ratio)
 									}
 								}
 								if (artboardItem.layer[k].hasOwnProperty('html')) {

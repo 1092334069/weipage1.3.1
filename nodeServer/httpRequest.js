@@ -6,7 +6,8 @@ function apiRequest(parameter, requestResult) {
 			if (parameter.pathname === apiRouter[i].pathname) {
 				apiRouter[i].action(parameter, (res) => {
 					if (res) {
-						requestResult.json(JSON.parse(res))
+						const resData = JSON.parse(res)
+						requestResult.json(resData)
 					} else {
 						requestResult.json({code: 501, message: '网络异常，请稍后重试' })
 					}
