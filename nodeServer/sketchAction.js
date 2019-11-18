@@ -9,7 +9,6 @@ const imageCropAction = require('./imageCropAction')
 function getLayerDir(folderName, callback) {
 	try {
 		const fileDir = __dirname + '/' + fileConfig.sketch + '/'
-		console.log(fileDir + folderName + '/', 'data.json')
 		const file = path.join(fileDir + folderName + '/', 'data.json')
 		fs.readFile(file, 'utf-8', function(err, jsonData) {
 			if (err) {
@@ -18,17 +17,18 @@ function getLayerDir(folderName, callback) {
 			}
 			const data = JSON.parse(jsonData)
 			const dirList = []
-			if (data && data.pageData && data.artboard) {
+			if (data && data.pageData && data.layerGroup) {
 				for (let key in data.pageData) {
 					const pageList = []
 					for (let i = 0; i < data.pageData[key].artboardId.length; i++) {
 						const artboardId = data.pageData[key].artboardId[i]
-						if (data.artboard[artboardId]) {
+						const artboardItem = getArtboardItem(data, artboardId)
+						if (artboardItem) {
 							dirList.push({
 								dirId: key,
 								dirName: decodeURIComponent(data.pageData[key].name),
 								pageId: artboardId,
-								pageName: decodeURIComponent(data.artboard[artboardId].name)
+								pageName: decodeURIComponent(artboardItem.name)
 							})
 						}
 					}
@@ -66,7 +66,6 @@ function sketchToWeipage(sketctData, localKey, callback) {
 			const coordinateList = parseCoordinateList(layerList)
 			const imageSource = parseImageList(layerList, imageFileList)
 			const scaleplateList = parseScaleplate(coordinateList)
-
 			imageCropAction.artboardCrop(imgFileDir, scaleplateList, (lastScaleplate) => {
 				let scaleplates = []
 				let coordinates = []
@@ -126,8 +125,8 @@ function parseImageList(layerList, imageFileList) {
 	if (layerList && layerList.length && imageFileList && imageFileList.length) {
 		for (let i = 0; i < layerList.length; i++) {
 			for (let j = imageFileList.length - 1; j >= 0; j--) {
-				if (imageFileList[j].indexOf(layerList[i].id) >= 0) {
-					imageSource[layerList[i].id] = imageFileList[j]
+				if (imageFileList[j].indexOf(layerList[i].src) >= 0) {
+					imageSource[layerList[i].src] = imageFileList[j]
 					break
 				}
 			}
@@ -167,7 +166,7 @@ function parseScaleplate(coordinateList) {
 function parseLayerList(jsonData, pageId, artboardId) {
 	const data = JSON.parse(jsonData)
 	const pageOrderList = []
-	if (data && data.pageOrder && data.pageData && data.artboard) {
+	if (data && data.pageOrder && data.pageData && data.layerGroup) {
 		for (let i = 0; i < data.pageOrder.length; i++) {
 			const pageOrderItem = data.pageData[data.pageOrder[i]]
 			if (pageOrderItem && data.pageOrder[i] === pageId) {
@@ -177,11 +176,12 @@ function parseLayerList(jsonData, pageId, artboardId) {
 					artboardList: []
 				}
 				for (let j = 0; j < pageOrderItem.artboardId.length; j++) {
-					const artboardItem = data.artboard[pageOrderItem.artboardId[j]]
-					if (artboardItem && artboardItem.id === artboardId) {
+					const artboardItem = getArtboardItem(data, pageOrderItem.artboardId[j])
+					if (artboardItem) {
 						const artboardObj = {
 							id: artboardItem.id,
-							name: decodeURIComponent(artboardItem.name),
+							//name: decodeURIComponent(artboardItem.name),
+							name: '',
 							layerList: []
 						}
 						// 算出页面比例
@@ -189,25 +189,48 @@ function parseLayerList(jsonData, pageId, artboardId) {
 						if (artboardItem.width >= 320) {
 							ratio = parseInt(parseInt(artboardItem.width) / 375)
 						}
-						for (let k = 0; k < artboardItem.layer.length; k++) {
-							var detail = getLayerCoordinate(artboardItem.layer[k].id, data.layerList)
+						for (let k = 0; k < artboardItem.layers.length; k++) {
+							const detail = artboardItem.layers[k]
 							if (detail) {
 								const layerItem = {
-									id: artboardItem.layer[k].id,
-									name: decodeURIComponent(artboardItem.layer[k].name),
-									style: artboardItem.layer[k].style,
+									id: detail.objectID,
+									src: detail.objectID,
+									name: detail.name,
+									//style: artboardItem.layer[k].style,
 									place: {
-										left: parseInt(detail.x / ratio),
-										top: parseInt(detail.y / ratio),
-										width: parseInt(detail.width / ratio),
-										height: parseInt(detail.height / ratio)
+										left: parseInt(detail.rect.x / ratio),
+										top: parseInt(detail.rect.y / ratio),
+										width: parseInt(detail.rect.width / ratio),
+										height: parseInt(detail.rect.height / ratio)
 									}
 								}
-								if (artboardItem.layer[k].hasOwnProperty('html')) {
-									layerItem.html = decodeURIComponent(artboardItem.layer[k].html)
-								}
+								// if (artboardItem.layer[k].hasOwnProperty('html')) {
+								// 	layerItem.html = decodeURIComponent(artboardItem.layer[k].html)
+								// }
 								artboardObj.layerList.push(layerItem)
 							}
+							// if (artboardItem.layer[k].symbolList) {
+							// 	for (let l = 0; l < artboardItem.layer[k].symbolList.length; l++) {
+							// 		const symbolId = artboardItem.layer[k].symbolList[l]
+							// 		const symbolDetail = getLayerCoordinate(symbolId, data.layerList)
+							// 		if (symbolDetail) {
+							// 			const symbolItem = {
+							// 				id: symbolId,
+							// 				src: artboardItem.layer[k].id,
+							// 				name: '',
+							// 				style: {},
+							// 				place: {
+							// 					left: parseInt(symbolDetail.x / ratio),
+							// 					top: parseInt(symbolDetail.y / ratio),
+							// 					width: parseInt(symbolDetail.width / ratio),
+							// 					height: parseInt(symbolDetail.height / ratio)
+							// 				}
+							// 			}
+							// 			artboardObj.layerList.push(symbolItem)
+							// 		}
+							// 	}
+							// }
+
 						}
 						pageOrderObj.artboardList.push(artboardObj)
 					}
@@ -223,23 +246,32 @@ function parseLayerList(jsonData, pageId, artboardId) {
 	}
 }
 
-function getLayerCoordinate(layerId, layerList) {
-	for (let i = 0; i < layerList.length; i++) {
-		if (layerId === layerList[i].objectID) {
-			if (layerList[i].rect) {
-				return {
-					width: layerList[i].rect.width,
-					height: layerList[i].rect.height,
-					x: layerList[i].rect.x,
-					y: layerList[i].rect.y
-				}
-			} else {
-				return false
-			}
+function getArtboardItem(data, artboardId) {
+	for (var i = 0; i < data.layerGroup.length; i++) {
+		if (data.layerGroup[i].id === artboardId) {
+			return data.layerGroup[i]
 		}
 	}
-	return false
+	return null
 }
+
+// function getLayerCoordinate(layerId, layerList) {
+// 	for (let i = 0; i < layerList.length; i++) {
+// 		if (layerId === layerList[i].objectID) {
+// 			if (layerList[i].rect) {
+// 				return {
+// 					width: layerList[i].rect.width,
+// 					height: layerList[i].rect.height,
+// 					x: layerList[i].rect.x,
+// 					y: layerList[i].rect.y
+// 				}
+// 			} else {
+// 				return false
+// 			}
+// 		}
+// 	}
+// 	return false
+// }
 
 // 重构排序
 function parseCoordinateList(layerList) {
