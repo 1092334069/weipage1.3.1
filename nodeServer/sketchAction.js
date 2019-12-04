@@ -3,7 +3,6 @@ const path = require("path")
 const fileConfig = require('../config/fileConfig')
 const pluginAction = require('./pluginAction')
 const quickSortAction = require('./quickSortAction')
-const imageCropAction = require('./imageCropAction')
 
 // 获取文件目录结构
 function getLayerDir(folderName, callback) {
@@ -60,46 +59,22 @@ function sketchToWeipage(sketctData, localKey, callback) {
 				callback(JSON.stringify({code: 501, message: '生成失败' }))
 				return
 			}
-			const imgFileDir = fileUrl + sketctData.pageId
+			const imgFileDir = fileUrl + 'pic'
 			const imageFileList = readFileList(__dirname + imgFileDir)
 			const layerList = parseLayerList(jsonData, sketctData.dirId, sketctData.pageId)
 			const coordinateList = parseCoordinateList(layerList)
 			const imageSource = parseImageList(layerList, imageFileList)
 			const scaleplateList = parseScaleplate(coordinateList)
-			imageCropAction.artboardCrop(imgFileDir, scaleplateList, (lastScaleplate) => {
-				let scaleplates = []
-				let coordinates = []
-				// 返回最后一个坐标时将原图的最后一个坐标补充进坐标系
-				if (lastScaleplate) {
-					for (let i = 0; i < scaleplateList.length; i++) {
-						if (lastScaleplate <= scaleplateList[i]) {
-							scaleplates.push(lastScaleplate)
-							break
-						}
-						scaleplates.push(scaleplateList[i])
-					}
-					for (let i = 0; i < coordinateList.length; i++) {
-						if (lastScaleplate <= coordinateList[i].bottom) {
-							coordinates.push(lastScaleplate)
-							break
-						}
-						coordinates.push(coordinateList[i])
-					}
-				} else {
-					scaleplates = scaleplateList
-					coordinates = coordinateList
-				}
-				const pluginList = pluginAction.createPluginList(localKey, scaleplates, layerList, imageSource, '/nodeServer' + imgFileDir)
-				callback(JSON.stringify({
-					code: 200,
-					data: {
-						pluginList,
-						layerList,
-						coordinateList: coordinates
-					},
-					message: '生成成功'
-				}))
-			}, callback)
+			const pluginList = pluginAction.createPluginList(localKey, scaleplateList, layerList, imageSource, '/nodeServer' + imgFileDir)
+			callback(JSON.stringify({
+				code: 200,
+				data: {
+					pluginList,
+					layerList,
+					coordinateList: scaleplateList
+				},
+				message: '生成成功'
+			}))
 		})
 	} catch (err) {
 		callback(JSON.stringify({code: 500, message: '生成失败' }))
@@ -176,63 +151,42 @@ function parseLayerList(jsonData, pageId, artboardId) {
 					artboardList: []
 				}
 				for (let j = 0; j < pageOrderItem.artboardId.length; j++) {
-					const artboardItem = getArtboardItem(data, pageOrderItem.artboardId[j])
-					if (artboardItem) {
-						const artboardObj = {
-							id: artboardItem.id,
-							//name: decodeURIComponent(artboardItem.name),
-							name: '',
-							layerList: []
-						}
-						// 算出页面比例
-						let ratio = 1
-						if (artboardItem.width >= 320) {
-							ratio = parseInt(parseInt(artboardItem.width) / 375)
-						}
-						for (let k = 0; k < artboardItem.layers.length; k++) {
-							const detail = artboardItem.layers[k]
-							if (detail) {
-								const layerItem = {
-									id: detail.objectID,
-									src: detail.objectID,
-									name: detail.name,
-									//style: artboardItem.layer[k].style,
-									place: {
-										left: parseInt(detail.rect.x / ratio),
-										top: parseInt(detail.rect.y / ratio),
-										width: parseInt(detail.rect.width / ratio),
-										height: parseInt(detail.rect.height / ratio)
-									}
-								}
-								// if (artboardItem.layer[k].hasOwnProperty('html')) {
-								// 	layerItem.html = decodeURIComponent(artboardItem.layer[k].html)
-								// }
-								artboardObj.layerList.push(layerItem)
+					if (pageOrderItem.artboardId[j] === artboardId) {
+						const artboardItem = getArtboardItem(data, artboardId)
+						if (artboardItem) {
+							const artboardObj = {
+								id: artboardItem.id,
+								//name: decodeURIComponent(artboardItem.name),
+								name: '',
+								layerList: []
 							}
-							// if (artboardItem.layer[k].symbolList) {
-							// 	for (let l = 0; l < artboardItem.layer[k].symbolList.length; l++) {
-							// 		const symbolId = artboardItem.layer[k].symbolList[l]
-							// 		const symbolDetail = getLayerCoordinate(symbolId, data.layerList)
-							// 		if (symbolDetail) {
-							// 			const symbolItem = {
-							// 				id: symbolId,
-							// 				src: artboardItem.layer[k].id,
-							// 				name: '',
-							// 				style: {},
-							// 				place: {
-							// 					left: parseInt(symbolDetail.x / ratio),
-							// 					top: parseInt(symbolDetail.y / ratio),
-							// 					width: parseInt(symbolDetail.width / ratio),
-							// 					height: parseInt(symbolDetail.height / ratio)
-							// 				}
-							// 			}
-							// 			artboardObj.layerList.push(symbolItem)
-							// 		}
-							// 	}
-							// }
+							// 算出页面比例
+							let ratio = 1
+							if (artboardItem.width >= 320) {
+								ratio = parseInt(parseInt(artboardItem.width) / 375)
+							}
+							for (let k = 0; k < artboardItem.layers.length; k++) {
+								const detail = artboardItem.layers[k]
+								if (detail) {
+									const layerItem = {
+										id: detail.objectID,
+										src: detail.objectID,
+										name: detail.name,
+										//style: artboardItem.layer[k].style,
+										place: {
+											left: parseInt(detail.rect.x / ratio),
+											top: parseInt(detail.rect.y / ratio),
+											width: parseInt(detail.rect.width / ratio),
+											height: parseInt(detail.rect.height / ratio)
+										}
+									}
+									artboardObj.layerList.push(layerItem)
+								}
 
+							}
+							pageOrderObj.artboardList.push(artboardObj)
 						}
-						pageOrderObj.artboardList.push(artboardObj)
+						break
 					}
 				}
 				pageOrderList.push(pageOrderObj)
@@ -255,23 +209,6 @@ function getArtboardItem(data, artboardId) {
 	return null
 }
 
-// function getLayerCoordinate(layerId, layerList) {
-// 	for (let i = 0; i < layerList.length; i++) {
-// 		if (layerId === layerList[i].objectID) {
-// 			if (layerList[i].rect) {
-// 				return {
-// 					width: layerList[i].rect.width,
-// 					height: layerList[i].rect.height,
-// 					x: layerList[i].rect.x,
-// 					y: layerList[i].rect.y
-// 				}
-// 			} else {
-// 				return false
-// 			}
-// 		}
-// 	}
-// 	return false
-// }
 
 // 重构排序
 function parseCoordinateList(layerList) {

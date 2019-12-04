@@ -10,11 +10,6 @@ function createPluginList(localKey, scaleplateList, layerList, imageSource, imgF
 		} else {
 			height = scaleplateList[i]
 		}
-		// const style = {
-		// 	width: 375,
-		// 	height,
-		// 	backgroundImage: imgFileDir + '/artboard/' + scaleplateList[i] + '.png'
-		// }
 		const style = {
 			width: 375,
 			height
@@ -25,7 +20,7 @@ function createPluginList(localKey, scaleplateList, layerList, imageSource, imgF
 	for (let i = 0; i < layerList.length; i++) {
 		for (let j = 0; j < scaleplateList.length; j++) {
 			if ((layerList[i].place.top + layerList[i].place.height) <= scaleplateList[j]) {
-				const pluginName = layerList[i].name
+				const pluginName = layerList[i].id
 				let top = 0
 				if (j > 0) {
 					top = scaleplateList[j-1]
@@ -44,7 +39,6 @@ function createPluginList(localKey, scaleplateList, layerList, imageSource, imgF
 					pluginStyle['lineHeight'] = parseInt(layerList[i].style['line-height']) || 18
 				}
 				if (imageSource[layerList[i].src]) {
-					console.log(layerList[i].src)
 					pluginStyle['backgroundImage'] = imgFileDir + '/' + imageSource[layerList[i].src]
 				}
 				const panelPlugin = createPanel(localKey, pluginName, pluginStyle)
