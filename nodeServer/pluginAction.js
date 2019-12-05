@@ -25,26 +25,21 @@ function createPluginList(localKey, scaleplateList, layerList, imageSource, imgF
 				if (j > 0) {
 					top = scaleplateList[j-1]
 				}
-				const pluginStyle = {
-					position: 'absolute',
-					top: layerList[i].place.top - top,
-					left: layerList[i].place.left,
-					width: layerList[i].place.width,
-					height: layerList[i].place.height
-				}
+				let pluginStyle = {}
 				if (layerList[i].style) {
-					pluginStyle['textAlign'] = layerList[i].style['text-align'] || 'left'
-					pluginStyle['fontSize'] = parseInt(layerList[i].style['font-size']) || 12
-					pluginStyle['color'] = layerList[i].style.color || '#333333'
-					pluginStyle['lineHeight'] = parseInt(layerList[i].style['line-height']) || 18
+					pluginStyle = layerList[i].style
 				}
+				pluginStyle['position'] = 'absolute'
+				pluginStyle['top'] = layerList[i].place.top - top
+				pluginStyle['left'] = layerList[i].place.left
+				pluginStyle['width'] = layerList[i].place.width
+				pluginStyle['height'] = layerList[i].place.height
 				if (imageSource[layerList[i].src]) {
 					pluginStyle['backgroundImage'] = imgFileDir + '/' + imageSource[layerList[i].src]
 				}
 				const panelPlugin = createPanel(localKey, pluginName, pluginStyle)
-				if (layerList[i].html) {
-					// panelPlugin.style['display'] = 'none'
-					// panelPlugin.pluginList.push(createText(localKey, layerList[i].html))
+				if (layerList[i].content) {
+					panelPlugin.pluginList.push(createText(localKey, layerList[i].content))
 				}
 				pluginList[j].pluginList.push(panelPlugin)
 				break

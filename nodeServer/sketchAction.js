@@ -156,7 +156,6 @@ function parseLayerList(jsonData, pageId, artboardId) {
 						if (artboardItem) {
 							const artboardObj = {
 								id: artboardItem.id,
-								//name: decodeURIComponent(artboardItem.name),
 								name: '',
 								layerList: []
 							}
@@ -172,13 +171,14 @@ function parseLayerList(jsonData, pageId, artboardId) {
 										id: detail.objectID,
 										src: detail.objectID,
 										name: detail.name,
-										//style: artboardItem.layer[k].style,
 										place: {
 											left: parseInt(detail.rect.x / ratio),
 											top: parseInt(detail.rect.y / ratio),
 											width: parseInt(detail.rect.width / ratio),
 											height: parseInt(detail.rect.height / ratio)
-										}
+										},
+										content: detail.content || '',
+										style: parseLayerStyle(detail.css)
 									}
 									artboardObj.layerList.push(layerItem)
 								}
@@ -198,6 +198,35 @@ function parseLayerList(jsonData, pageId, artboardId) {
 	} else {
 		return []
 	}
+}
+
+function toCamel(str) {
+  	return str.replace(/([^-])(?:-+([^-]))/g, function ($0, $1, $2) {
+	    return $1 + $2.toUpperCase();
+  	})
+}
+
+function parseLayerStyleValue(val) {
+	if (val) {
+		return val.trim().replace(';', '')
+	}
+	return ''
+}
+
+function parseLayerStyle(layerCssList) {
+	const style = {}
+	if (layerCssList) {
+		for (let i = 0; i < layerCssList.length; i++) {
+			if (layerCssList[i]) {
+				const list = layerCssList[i].split(':')
+				if (list && list.length > 1) {
+					const key = toCamel(list[0])
+					style[key] = parseLayerStyleValue(list[1])
+				}
+			}
+		}
+	}
+	return style
 }
 
 function getArtboardItem(data, artboardId) {
